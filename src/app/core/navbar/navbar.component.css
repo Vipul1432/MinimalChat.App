@@ -4,3 +4,10 @@
   .title {
     color: aliceblue;
   }
+  .user {
+    font-size: medium;
+  }
+
+  .logout-icon {
+    cursor: pointer !important;
+  }
