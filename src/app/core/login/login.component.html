@@ -1,0 +1,32 @@
+<div class="container">
+    <mat-card class="registration-card">
+      <mat-card-title class="registration-title">Login</mat-card-title>
+      <mat-card-content>
+        <form class="my-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="vipul@example.com" formControlName="email">
+            <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+            <mat-error *ngIf="loginForm.get('email')!.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="loginForm.get('email')!.hasError('email')">Please enter a valid email</mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Password" formControlName="password">
+            <button mat-icon-button matSuffix (click)="togglePasswordVisibility($event)">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')!.hasError('required')">Password is required</mat-error>
+            <mat-error *ngIf="loginForm.get('password')!.hasError('pattern')">Password should contain at least one capital letter,<br>
+              one digit, one special character & minimum 6 digits
+            </mat-error>
+          </mat-form-field>
+  
+          <div class="submit-button">
+            <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  

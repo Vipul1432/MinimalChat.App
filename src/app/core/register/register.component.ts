@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { passwordMatchValidator } from 'src/app/_helpers/validators/password-match.validator';
 import { RegistrationModel } from 'src/app/_shared/models/RegistrationModel';
@@ -14,9 +15,14 @@ export class RegisterComponent {
   hidePassword = true;
   hideConfirmPassword = true; 
   registrationForm: FormGroup;
-  registrationResult: any; // Define a variable to store the registration result
+  registrationResult: any;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private toasterService: NgToastService) {
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private toasterService: NgToastService,
+    private router: Router, 
+    ) {
     this.registrationForm = this.fb.group({
       fullname: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
@@ -49,7 +55,8 @@ export class RegisterComponent {
               detail: "SUCCESS",
               summary: `${response.data.name} Registration successful`,
               duration: 5000
-            });
+            });            
+            this.router.navigateByUrl('/login');
           } else if (response.statusCode === 409) {
             this.toasterService.error({
               detail: "ERROR",
@@ -78,11 +85,13 @@ export class RegisterComponent {
   }
   
 
-  togglePasswordVisibility() {
+  togglePasswordVisibility(event: Event) {
+    event.preventDefault();
     this.hidePassword = !this.hidePassword;
   }
 
-  toggleConfirmPasswordVisibility() {
+  toggleConfirmPasswordVisibility(event: Event) {
+    event.preventDefault();
     this.hideConfirmPassword = !this.hideConfirmPassword;
   }
 }
