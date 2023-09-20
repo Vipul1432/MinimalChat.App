@@ -1,0 +1,68 @@
+.registration-card {
+    max-width: 400px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.registration-title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.container {  
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.submit-button {
+    margin-top: 20px;
+    text-align: center;
+}
+
+mat-error {
+    white-space: pre-line;
+    margin-top: 8px;
+    color: red; 
+}
+
+.password-confirm-field {
+    margin-top: 10px; 
+  }
+
+  .password-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+  }
+
+  .password-error {
+    margin-top: 16px;
+  }
+
+  mat-form-field {
+    margin-bottom: 16px;
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.login-button {
+    color: #007bff; /* Change the color to your preferred link color */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-button:hover {
+    text-decoration: underline; /* Underline the link on hover */
+}
