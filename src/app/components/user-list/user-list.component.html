@@ -1,6 +1,6 @@
 <div class="user-list">
-    <div *ngFor="let user of users" class="user-box">
-      <div class="circle-box" [style.backgroundColor]="generateRandomColor()">
+    <div *ngFor="let user of users" class="user-box" (click)="onUserClick(user.id, user.name)">
+      <div class="circle-box" [ngStyle]="{ 'background-color': userBackgroundColors }">
         {{ user.name.charAt(0) | uppercase }}
       </div>
       <div class="user-name">{{ user.name  | titlecase}}</div>
