@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './core/login/login.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboard.component';
+import { UserChatComponent } from './components/user-chat/user-chat.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboa
     RegisterComponent,
     LoginComponent,
     UserListComponent,
-    ChatDashboardComponent
+    ChatDashboardComponent,
+    UserChatComponent
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,10 @@
 
 <div class="chat-dashboard">
     <div class="user-list">
-      <app-user-list *ngIf="showUserList"></app-user-list>
+      <app-user-list *ngIf="showUserList" (userClicked)="onUserClicked($event.userId, $event.name)"></app-user-list>
     </div>
     <div class="user-chat">
-      
+      <app-user-chat [userId]="selectedUserId" [name] = "selectedUserName"></app-user-chat>
     </div>
   </div>
   

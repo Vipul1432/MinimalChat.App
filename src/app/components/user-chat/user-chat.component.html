@@ -1,0 +1,21 @@
+<div class="chat-container">
+  <div class="sticky-header" *ngIf="selectedUserName">
+    <div class="avatar" [ngStyle]="avatarStyle(selectedUserName)">
+      <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
+    </div>
+    <span>{{ selectedUserName }}</span>
+  </div>
+  <div class="message-container">
+    <div *ngFor="let message of userChat" class="message" [ngClass]="{'sender-message': !isSender(message), 'receiver-message': isSender(message)}">
+      {{ message.content }}
+    </div>
+  </div>
+  <div class="input-container">
+    <input type="text" placeholder="Type your message..." class="input-box">
+    <button class="send-button">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+  

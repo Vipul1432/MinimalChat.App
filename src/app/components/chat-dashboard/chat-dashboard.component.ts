@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class ChatDashboardComponent {
   showUserList = true;
+  selectedUserId: string = '';
+  selectedUserName: string = '';
+
+  onUserClicked(userId: string, name: string) {
+    this.selectedUserId = userId;
+    this.selectedUserName = name;
+  }
 }
