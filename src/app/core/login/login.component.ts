@@ -47,7 +47,7 @@ export class LoginComponent {
               summary: `Login successful`,
               duration: 5000
             });            
-            this.router.navigateByUrl('/login');
+            this.router.navigateByUrl('/chat');
           } else if (response.statusCode === 401) {
             this.toasterService.error({
               detail: "ERROR",
