@@ -1,0 +1,32 @@
+
+  .user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+  }
+  
+  .user-box {
+    display: flex;
+    align-items: center;
+    cursor: pointer !important;
+    background-color: #F9DEC9;
+    border: black;
+    border-radius: 8px;
+  }
+  
+  .circle-box {
+    width: 50px; 
+    height: 50px; 
+    background-color: #3f51b5;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+  }
+  
+  .user-name {
+    margin-left: 10px;
+    font-size: 16px;
+  }
+  

@@ -1,0 +1,19 @@
+/* app.component.css */
+.chat-dashboard {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .user-list {
+    width: 25%; /* Adjust the width as needed */
+    padding: 16px;
+    background-color: #f0f0f0;
+    overflow: auto; 
+    height: 100%;
+  }
+  
+  .user-chat {
+    flex: 1;
+    padding: 16px;
+  }
+  

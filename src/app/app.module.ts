@@ -11,13 +11,17 @@ import { RegisterComponent } from './core/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './core/login/login.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    UserListComponent,
+    ChatDashboardComponent
   ],
   imports: [
     BrowserModule,

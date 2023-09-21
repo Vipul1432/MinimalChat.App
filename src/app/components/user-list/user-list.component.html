@@ -1,0 +1,9 @@
+<div class="user-list">
+    <div *ngFor="let user of users" class="user-box">
+      <div class="circle-box" [style.backgroundColor]="generateRandomColor()">
+        {{ user.name.charAt(0) | uppercase }}
+      </div>
+      <div class="user-name">{{ user.name  | titlecase}}</div>
+    </div>
+  </div>
+  
