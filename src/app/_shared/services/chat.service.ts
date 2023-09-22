@@ -45,4 +45,15 @@ export class ChatService {
       }
     return this.http.get<UserChat[]>(url, { headers, params });
   }
+
+  sendMessage(receiverId: string, content: string): Observable<any> {
+    const url = `${this.apiUrl}messages`;
+    const headers = this.getHeaders();
+    const body = {
+      receiverId: receiverId,
+      content: content,
+    };
+
+    return this.http.post(url, body, { headers });
+  }
 }

@@ -14,6 +14,8 @@ export class UserListComponent implements OnInit {
 
   userBackgroundColors: string[] = [];
   colors: string[] = ['#000000', '#e91e63', '#009688', '#ff9800', '#673ab7', '#ff5722'];
+  i: number = 0;
+
   constructor(
     private userService: UserService, 
     private toasterService: NgToastService,
@@ -24,9 +26,10 @@ export class UserListComponent implements OnInit {
     this.userService.getAllUsers().subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
-          this.users = response.data; // Assign the users from the response
+          this.users = response.data;
+          this.generateRandomNumber(this.users.length)
           this.users.forEach(() => {
-            this.userBackgroundColors.push(this.generateRandomColor());
+            this.userBackgroundColors = this.generateRandomColors(this.users.length);
           });
           this.toasterService.success({
             detail: "SUCCESS",
@@ -51,8 +54,16 @@ export class UserListComponent implements OnInit {
       }
     );
   }
-  generateRandomColor(): string {
-    return '#' + Math.floor(Math.random()*16777215).toString(16);
+  generateRandomColors(count: number): string[] {
+    const randomColors: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * this.colors.length);
+      randomColors.push(this.colors[randomIndex]);
+    }
+    return randomColors;
+  }
+  generateRandomNumber(max: number): number {
+    return Math.floor(Math.random() * max);
   }
   
   onUserClick(userId: string, name: string): void {

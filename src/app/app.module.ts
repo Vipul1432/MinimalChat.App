@@ -8,7 +8,7 @@ import { MaterialModule } from './_helpers/material/material.module';
 import { NgToastModule } from 'ng-angular-popup';
 import { NavbarComponent } from './core/navbar/navbar.component';
 import { RegisterComponent } from './core/register/register.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './core/login/login.component';
 import { UserListComponent } from './components/user-list/user-list.component';
@@ -32,7 +32,8 @@ import { UserChatComponent } from './components/user-chat/user-chat.component';
     MaterialModule,
     NgToastModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
