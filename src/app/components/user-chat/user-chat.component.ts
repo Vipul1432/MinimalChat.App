@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, NgZone, OnChanges, SimpleChanges } from '@angular/core';
 import { UserChat } from 'src/app/_shared/models/UserChat';
+import { AuthService } from 'src/app/_shared/services/auth.service';
 import { ChatService } from 'src/app/_shared/services/chat.service';
 
 
@@ -16,10 +17,13 @@ export class UserChatComponent implements OnChanges {
   @Input() name: string = '';
   topPosToStartShowing = 100;
   isLoading!: boolean;
-  selectedUserName: string = ''
+  selectedUserName: string = '';
+  currentUserName: string | null = '';
+  messageInput: string = '';
 
-  constructor(private chatService: ChatService,private ngZone: NgZone) {
-    
+  constructor(private chatService: ChatService,private authService: AuthService) {
+    this.currentUserName = this.authService.getUserName();
+    console.log(this.currentUserName);   
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -33,9 +37,6 @@ export class UserChatComponent implements OnChanges {
         this.chatService.getUserChat(this.userId, null, null, null).subscribe((messages:any) => {
           this.userChat = messages.data || [];
           this.topTimestamp = this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
-          console.log(this.topTimestamp);         
-          console.log(messages);
-          
         });
       }
     }
@@ -63,8 +64,6 @@ export class UserChatComponent implements OnChanges {
       if (this.userChat.length > 0) {
         this.topTimestamp = this.userChat[0].timestamp;
       }
-
-      console.log(messages);
     });
   }
 
@@ -72,11 +71,25 @@ export class UserChatComponent implements OnChanges {
     return message.senderId === this.userId;
   }
 
-  avatarStyle(name: string): any {
-    const colors = ['#e91e63', '#009688', '#ff9800', '#673ab7', '#ff5722'];
-    const initial = name.charAt(0).toUpperCase(); 
-    const colorIndex = initial.charCodeAt(0) % colors.length;
-    const backgroundColor = colors[colorIndex];  
-    return { 'background-color': backgroundColor };
+  sendMessage() {
+    const content = this.messageInput.trim();
+    if (content.trim() !== '') {
+      // Check if the content is not empty or whitespace
+      this.chatService.sendMessage(this.userId, content).subscribe((response: any) => {
+        // Handle the response if needed
+        if (response.statusCode === 200) {
+          // Message sent successfully
+          console.log('Message sent successfully:', response.data);
+          this.chatService.getUserChat(this.userId, null, null, null).subscribe((messages:any) => {
+            this.userChat = messages.data || [];
+            this.topTimestamp = this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
+            this.messageInput = '';
+          });
+        } else {
+          // Handle any errors or show a notification to the user
+          console.error('Failed to send message:', response.error);
+        }
+      });
+    }
   }
 }

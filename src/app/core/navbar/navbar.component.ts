@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/_shared/services/auth.service';
 export class NavbarComponent {
 title: string = 'Mimimal Chat App'
 userName: string | null = null;
-  isAuthenticated = false;
+isAuthenticated = false;
 
   constructor(private authService: AuthService) {
     // Check authentication status when the component initializes
