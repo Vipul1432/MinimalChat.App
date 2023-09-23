@@ -14,6 +14,7 @@ import { LoginComponent } from './core/login/login.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboard.component';
 import { UserChatComponent } from './components/user-chat/user-chat.component';
+import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-message-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { UserChatComponent } from './components/user-chat/user-chat.component';
     LoginComponent,
     UserListComponent,
     ChatDashboardComponent,
-    UserChatComponent
+    UserChatComponent,
+    EditMessageDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -56,4 +56,12 @@ export class ChatService {
 
     return this.http.post(url, body, { headers });
   }
+
+  updateMessageContent(messageId: number, content: string): Observable<any> {
+    const url = `${this.apiUrl}messages/${messageId}`;
+    const headers = this.getHeaders();
+    const body = { content };
+  
+    return this.http.put(url, body, { headers });
+  }
 }

@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Edit Message</h1>
+<div mat-dialog-content>
+  <!-- Add input fields for editing the message content -->
+  <input type="text" [(ngModel)]="originalContent" class="form-control" />
+</div>
+<div mat-dialog-actions>
+  <button mat-button class="close" (click)="closeDialog()">Close</button>
+  <button mat-button class="save" color="primary" (click)="saveEdit()">Save Changes</button>
+</div>
