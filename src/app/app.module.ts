@@ -15,6 +15,8 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboard.component';
 import { UserChatComponent } from './components/user-chat/user-chat.component';
 import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-message-dialog.component';
+import { LogListComponent } from './components/log-list/log-list.component';
+import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,8 @@ import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-
     ChatDashboardComponent,
     UserChatComponent,
     EditMessageDialogComponent,
+    LogListComponent,
+    DateTimeFormatPipe,
   ],
   imports: [
     BrowserModule,
