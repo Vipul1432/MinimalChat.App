@@ -4,4 +4,6 @@ export interface UserChat {
     receiverId: string;
     content: string;
     timestamp:Date;
+    editedContent?: string; // For edited messages
+    isEditing?: boolean;
   }

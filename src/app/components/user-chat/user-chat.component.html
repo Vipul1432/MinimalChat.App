@@ -17,7 +17,9 @@
               <ng-container *ngFor="let message of userChat">
                 <div *ngIf="!isSender(message); else receiverContent" class="d-flex flex-row justify-content-end pt-1">
                   <div>
-                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{{ message.content }}</p>
+                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
+                    (click)="showContextMenu(message)"
+                    [matMenuTriggerFor]="messageContextMenu">{{ message.content }}</p>
                     <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ message.timestamp | date:'h:mm a' }}</p>
                   </div>
                   <div class="avatar current-user-avatar">
@@ -54,3 +56,10 @@
     </div>
   </div>
 </section>
+
+
+<!-- Context Menu -->
+<mat-menu #messageContextMenu="matMenu">
+  <button mat-menu-item (click)="editMessage(selectedMessage!)">Edit</button>
+  <button mat-menu-item (click)="deleteMessage()">Delete</button>
+</mat-menu>
