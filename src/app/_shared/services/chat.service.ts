@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { UserChat } from '../models/UserChat';
+import { Log } from '../models/Log';
+import { format } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -71,4 +73,37 @@ export class ChatService {
 
     return this.http.delete(url, { headers });
   }
+ 
+
+  fetchLogs(startTime?: Date | null, endTime?: Date | null): Observable<any> {
+    const url = `${this.apiUrl}log`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    });
+
+    let params = new HttpParams();
+
+    if (startTime !== null) {
+      params = params.set('startTime', this.formatDate(startTime!));
+    }
+
+    if (endTime !== null) {
+      params = params.set('endTime', this.formatDate(endTime!));
+    }
+
+    return this.http.get<any>(url, { headers, params });
+  }
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+  }
 }
+  
