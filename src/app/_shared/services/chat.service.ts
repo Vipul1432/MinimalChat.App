@@ -64,4 +64,11 @@ export class ChatService {
   
     return this.http.put(url, body, { headers });
   }
+
+  deleteMessage(messageId: number): Observable<any> {
+    const url = `${this.apiUrl}messages/${messageId}`;
+    const headers = this.getHeaders();
+
+    return this.http.delete(url, { headers });
+  }
 }

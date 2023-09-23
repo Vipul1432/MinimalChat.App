@@ -6,7 +6,7 @@ import { EditMessageDialogComponent } from 'src/app/_helpers/edit-message-dialog
 import { UserChat } from 'src/app/_shared/models/UserChat';
 import { AuthService } from 'src/app/_shared/services/auth.service';
 import { ChatService } from 'src/app/_shared/services/chat.service';
-
+import Swal  from 'sweetalert2';
 
 
 @Component({
@@ -54,6 +54,7 @@ export class UserChatComponent implements OnChanges {
       }
     }
   }
+  
   @HostListener('window:scroll', ['$event'])
   checkScroll(event: Event) {
     const scrollPosition =
@@ -133,7 +134,7 @@ export class UserChatComponent implements OnChanges {
   }
 
   showContextMenu(message: UserChat) {
-    this.selectedMessage = message;
+    this.selectedMessage = message;   
   }
 
   @ViewChild('messageContextMenu') messageContextMenu!: MatMenuTrigger;
@@ -167,7 +168,53 @@ export class UserChatComponent implements OnChanges {
       );
   }
 
-  deleteMessage() {
-    // Delete
+  deleteMessage(message: UserChat) {
+    console.log(message.content);  
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger me-2'
+      },
+      buttonsStyling: false
+    })
+    
+    swalWithBootstrapButtons.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("yes!" + message.id);
+        this.chatService.deleteMessage(message.id).subscribe(() => {
+          this.chatService
+          .getUserChat(this.userId, null, null, null)
+          .subscribe((messages: any) => {
+            this.userChat = messages.data || [];
+            this.topTimestamp =
+              this.userChat.length > 0
+                ? this.userChat[0].timestamp
+                : new Date();
+              });
+          });
+        swalWithBootstrapButtons.fire(
+          'Deleted!',
+          'Your message has been deleted.',
+          'success'
+        )
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          'Cancelled',
+          'Your message is safe :)',
+          'error'
+        )
+      }
+    })
   }
+  
 }
