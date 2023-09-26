@@ -10,6 +10,12 @@ export class ChatDashboardComponent {
   selectedUserId: string = '';
   selectedUserName: string = '';
 
+  /**
+ * Handles the user interaction when a user is clicked or selected.
+ *
+ * @param userId - The ID of the selected user.
+ * @param name - The name of the selected user.
+ */
   onUserClicked(userId: string, name: string) {
     this.selectedUserId = userId;
     this.selectedUserName = name;

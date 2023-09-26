@@ -66,3 +66,11 @@ mat-error {
 .login-button:hover {
     text-decoration: underline;
 }
+.go-to-register {
+    margin-top: 10px;
+}
+
+#buttonDiv {
+    display: flex;
+    justify-content: center;
+}

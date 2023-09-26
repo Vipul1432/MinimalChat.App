@@ -17,6 +17,7 @@ import { UserChatComponent } from './components/user-chat/user-chat.component';
 import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-message-dialog.component';
 import { LogListComponent } from './components/log-list/log-list.component';
 import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
     EditMessageDialogComponent,
     LogListComponent,
     DateTimeFormatPipe,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,

@@ -21,6 +21,10 @@ export class UserListComponent implements OnInit {
     private toasterService: NgToastService,
     ) {} 
 
+    /**
+ * Angular lifecycle hook called when the component is initialized.
+ * Fetches a list of users and performs necessary operations.
+ */
   ngOnInit() {
     // Fetch all users
     this.userService.getAllUsers().subscribe(
@@ -54,6 +58,13 @@ export class UserListComponent implements OnInit {
       }
     );
   }
+
+  /**
+ * Generates an array of random colors.
+ *
+ * @param count - The number of random colors to generate.
+ * @returns An array of random color strings.
+ */
   generateRandomColors(count: number): string[] {
     const randomColors: string[] = [];
     for (let i = 0; i < count; i++) {
@@ -62,10 +73,23 @@ export class UserListComponent implements OnInit {
     }
     return randomColors;
   }
+
+  /**
+ * Generates a random number between 0 (inclusive) and the specified maximum value (exclusive).
+ *
+ * @param max - The maximum value (exclusive) for the random number.
+ * @returns A random number.
+ */
   generateRandomNumber(max: number): number {
     return Math.floor(Math.random() * max);
   }
-  
+ 
+  /**
+ * Emits a userClicked event when a user is clicked or selected.
+ *
+ * @param userId - The ID of the clicked user.
+ * @param name - The name of the clicked user.
+ */
   onUserClick(userId: string, name: string): void {
     this.userClicked.emit({ userId, name});
   }
