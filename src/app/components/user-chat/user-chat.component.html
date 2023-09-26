@@ -11,7 +11,7 @@
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
           </div>
-          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #scrollBarContainer>
             <div class="d-flex flex-column justify-content-start" #messageContainerRef>
               <!-- Messages for current user -->
               <ng-container *ngFor="let message of userChat">

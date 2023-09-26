@@ -1,64 +1,63 @@
 <div>
-    <h1 class="text-success fs-2 text-center">All Logs</h1>
-    <div>
-      <mat-form-field appearance="fill">
-        <mat-label>Select Timeframe:</mat-label>
-        <mat-select [(ngModel)]="selectedTimeframe" (selectionChange)="onTimeframeChange()">
-          <mat-option value="5">Last 5 mins</mat-option>
-          <mat-option value="10">Last 10 mins</mat-option>
-          <mat-option value="30">Last 30 mins</mat-option>
-          <mat-option value="custom">Custom</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  
-    <!-- Custom time range input -->
-    <div *ngIf="selectedTimeframe === 'custom'">
-      <mat-form-field>
-        <mat-label>Start Time:</mat-label>
-        <ngx-material-timepicker-toggle matSuffix [for]="startTimePicker"></ngx-material-timepicker-toggle>
-        <input matInput [ngxTimepicker]="startTimePicker" [(ngModel)]="startTime">
-        <ngx-material-timepicker #startTimePicker [format]="24"></ngx-material-timepicker>
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label>End Time:</mat-label>
-        <ngx-material-timepicker-toggle matSuffix [for]="endTimePicker"></ngx-material-timepicker-toggle>
-        <input matInput [ngxTimepicker]="endTimePicker" [(ngModel)]="endTime">
-        <ngx-material-timepicker #endTimePicker [format]="24"></ngx-material-timepicker>
-      </mat-form-field>
-  
-      <button mat-raised-button color="primary" (click)="setCustomTimes()">Fetch logs</button>
-    </div>
-  
-    <!-- Table with pagination -->
-    <mat-table [dataSource]="dataSource" matSort>
-      <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Sr. No.</mat-header-cell>
-        <mat-cell *matCellDef="let log">{{ log.id }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="ipAddress">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Ip Address</mat-header-cell>
-        <mat-cell *matCellDef="let log">{{ log.ipAddress }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="requestTimestamp">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Time Stamp</mat-header-cell>
-        <mat-cell *matCellDef="let log">{{ log.requestTimestamp | dateTimeFormat }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="username">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>User Name</mat-header-cell>
-        <mat-cell *matCellDef="let log">{{ log.username }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="requestBody">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Request Body</mat-header-cell>
-        <mat-cell *matCellDef="let log">{{ log.requestBody }}</mat-cell>
-      </ng-container>
-  
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-    </mat-table>
-  
-    <!-- Pagination -->
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+  <h1 class="text-success fs-2 text-center">All Logs</h1>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>Select Timeframe:</mat-label>
+      <mat-select [(ngModel)]="selectedTimeframe" (selectionChange)="onTimeframeChange()">
+        <mat-option value="5">Last 5 mins</mat-option>
+        <mat-option value="10">Last 10 mins</mat-option>
+        <mat-option value="30">Last 30 mins</mat-option>
+        <mat-option value="custom">Custom</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  
+
+  <!-- Custom time range input -->
+  <div *ngIf="selectedTimeframe === 'custom'">
+    <mat-form-field>
+      <mat-label>Start Time:</mat-label>
+      <ngx-material-timepicker-toggle matSuffix [for]="startTimePicker"></ngx-material-timepicker-toggle>
+      <input matInput [ngxTimepicker]="startTimePicker" [(ngModel)]="startTime">
+      <ngx-material-timepicker #startTimePicker [format]="24"></ngx-material-timepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>End Time:</mat-label>
+      <ngx-material-timepicker-toggle matSuffix [for]="endTimePicker"></ngx-material-timepicker-toggle>
+      <input matInput [ngxTimepicker]="endTimePicker" [(ngModel)]="endTime">
+      <ngx-material-timepicker #endTimePicker [format]="24"></ngx-material-timepicker>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="setCustomTimes()">Fetch logs</button>
+  </div>
+
+  <!-- Table with pagination and sorting -->
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ID">ID</th>
+      <td mat-cell *matCellDef="let log">{{ log.id }}</td>
+    </ng-container>
+    <ng-container matColumnDef="ipAddress">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by IP Address">Ip Address</th>
+      <td mat-cell *matCellDef="let log">{{ log.ipAddress }}</td>
+    </ng-container>
+    <ng-container matColumnDef="requestTimestamp">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Time Stamp">Time Stamp</th>
+      <td mat-cell *matCellDef="let log">{{ log.requestTimestamp | dateTimeFormat }}</td>
+    </ng-container>
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by User Name">User Name</th>
+      <td mat-cell *matCellDef="let log">{{ log.username }}</td>
+    </ng-container>
+    <ng-container matColumnDef="requestBody">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Request Body">Request Body</th>
+      <td mat-cell *matCellDef="let log">{{ log.requestBody }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- Pagination -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" [pageSize]="pageSize" (page)="onPageChange($event)"></mat-paginator>
+</div>

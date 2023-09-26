@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { NgToastService } from 'ng-angular-popup';
@@ -30,11 +30,21 @@ export class UserChatComponent implements OnChanges {
     private chatService: ChatService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private toasterService: NgToastService
+    private toasterService: NgToastService,
   ) {
     this.currentUserName = this.authService.getUserName();
   }
 
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+  @ViewChild('messageContainerRef', { static: false }) messageContainerRef!: ElementRef;
+
+  /**
+ * Lifecycle hook that gets called when there are changes to input properties.
+ *
+ * @param changes - An object containing changes to input properties.
+ */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['userId'] && !changes['userId'].firstChange) {
       if (changes['name'] && !changes['name'].firstChange) {
@@ -51,10 +61,25 @@ export class UserChatComponent implements OnChanges {
                 ? this.userChat[0].timestamp
                 : new Date();
           });
+          this.scrollToBottom();
       }
     }
   }
+
+  /**
+ * Scrolls to the bottom of the message container element.
+ */
+  private scrollToBottom() {
+    if (this.messageContainerRef) {
+      this.messageContainerRef.nativeElement.scrollTop = this.messageContainerRef.nativeElement.scrollHeight;
+    }
+  }
   
+  /**
+ * Checks the scroll position and triggers an action if specific conditions are met.
+ *
+ * @param event - The scroll event.
+ */
   @HostListener('window:scroll', ['$event'])
   checkScroll(event: Event) {
     const scrollPosition =
@@ -63,18 +88,30 @@ export class UserChatComponent implements OnChanges {
       document.body.scrollTop ||
       0;
 
-    if (scrollPosition <= 0 && !this.isLoading) {
+    if (scrollPosition <= 0 || scrollPosition <= 25 && !this.isLoading) {
       this.isLoading = true;
       this.fetchUserChat(this.topTimestamp);
     }
   }
 
+  /**
+ * Fetches user chat data based on the provided topTimestamp and updates the userChat array.
+ *
+ * @param topTimestamp - The timestamp to fetch chat messages from (null for initial load).
+ */
   private fetchUserChat(topTimestamp: Date) {
     this.chatService
       .getUserChat(this.userId, topTimestamp, null, null)
       .subscribe((messages: any) => {
+        console.log(messages);
+        
         if (topTimestamp === null) {
           this.userChat = messages.data;
+          this.toasterService.success({
+            detail: 'SUCCESS',
+            summary: '20 more messagse retrieve successfully!',
+            duration: 5000,
+          });
         } else {
           // Append the new messages to the existing ones
           this.userChat = [...messages.data, ...this.userChat];
@@ -84,13 +121,27 @@ export class UserChatComponent implements OnChanges {
         if (this.userChat.length > 0) {
           this.topTimestamp = this.userChat[0].timestamp;
         }
+      },
+      (error: any) => {
+        if(error.status === 400) { 
+          console.log(error.error.message);              
+        }              
       });
   }
 
+  /**
+ * Checks if the given UserChat message is sent by the currently logged-in user.
+ *
+ * @param message - The UserChat message object to check.
+ * @returns True if the message is sent by the user, false otherwise.
+ */
   isSender(message: UserChat): boolean {
     return message.senderId === this.userId;
   }
 
+  /**
+ * Sends a message in the chat.
+ */
   sendMessage() {
     const content = this.messageInput.trim();
     if (content.trim() !== '') {
@@ -116,7 +167,13 @@ export class UserChatComponent implements OnChanges {
     }
   }
 
-  // Edit Message
+ /**
+ * Opens a dialog for editing a user's chat message and saves the edited message if changes are made.
+ *
+ * @param message The UserChat object representing the message to be edited.
+ *                If provided, the dialog for editing is opened.
+ *                If not provided or falsy, the function does nothing.
+ **/
   editMessage(message: UserChat) {
     if (message) {
       // Open the dialog
@@ -133,13 +190,22 @@ export class UserChatComponent implements OnChanges {
     }
   }
 
+  /**
+ * Displays a context menu or options for the given UserChat message.
+ *
+ * @param message - The UserChat message for which to show the context menu.
+ */
   showContextMenu(message: UserChat) {
     this.selectedMessage = message;   
   }
 
   @ViewChild('messageContextMenu') messageContextMenu!: MatMenuTrigger;
 
-  // Save the edited message content
+  /**
+ * Saves the edited content of a chat message.
+ *
+ * @param result - The UserChat message with edited content.
+ */
   saveEditMessage(result: UserChat) {
     this.chatService
       .updateMessageContent(result.id, result.editedContent!)
@@ -168,6 +234,11 @@ export class UserChatComponent implements OnChanges {
       );
   }
 
+  /**
+ * Handles the deletion of a chat message.
+ *
+ * @param message - The UserChat message to be deleted.
+ */
   deleteMessage(message: UserChat) {
     console.log(message.content);  
     const swalWithBootstrapButtons = Swal.mixin({
@@ -215,6 +286,5 @@ export class UserChatComponent implements OnChanges {
         )
       }
     })
-  }
-  
+  } 
 }

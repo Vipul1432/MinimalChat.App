@@ -31,12 +31,20 @@ export class LogListComponent implements OnInit {
     this.fetchLogs();
   }
 
+  /**
+ * Handles a page change event in a paginated data view.
+ *
+ * @param event - The event object containing information about the page change.
+ */
   onPageChange(event: any): void {
     this.pageSize = event.pageSize;
     this.paginator.pageIndex = event.pageIndex;
     this.fetchLogs();
   }
 
+  /**
+ * Fetches log data within a specified time range and updates the UI accordingly.
+ */
   fetchLogs(): void {
     this.chatService.fetchLogs(this.startTime, this.endTime)
       .subscribe(
@@ -59,6 +67,9 @@ export class LogListComponent implements OnInit {
       );
   }
 
+  /**
+ * Handles changes in the selected timeframe for log data retrieval.
+ */
   onTimeframeChange(): void {
     if (this.selectedTimeframe === 'custom' && this.startTime !== null && this.endTime !== null) {
 
@@ -73,6 +84,12 @@ export class LogListComponent implements OnInit {
     this.fetchLogs();
   }
 
+  /**
+ * Parses a time string in the format 'hh:mm AM/PM' and converts it to a Date object.
+ *
+ * @param time - The time string to be parsed.
+ * @returns A Date object representing the parsed time, or null if the input is invalid.
+ */
   private formatTime(time: string | null): Date | null {
     if (time === null || typeof time !== 'string') {
       return null;
@@ -116,6 +133,9 @@ export class LogListComponent implements OnInit {
     return parsedTime;
   }
 
+  /**
+ * Sets custom start and end times for log data retrieval and fetches logs within the custom time range.
+ */
   setCustomTimes(): void {
     this.startTime = this.formatTime(this.startTime!.toString());
     this.endTime = this.formatTime(this.endTime!.toString());

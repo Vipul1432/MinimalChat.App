@@ -14,11 +14,20 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+ * Retrieves a JSON Web Token (JWT) from local storage.
+ *
+ * @returns The JWT token as a string if it's stored in local storage, or null if not found.
+ */
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  // Add JWT token to headers
+  /**
+ * Creates and returns HttpHeaders with the necessary authentication headers.
+ *
+ * @returns HttpHeaders object with "Content-Type" and "Authorization" headers.
+ */
   private getHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
@@ -27,6 +36,15 @@ export class ChatService {
     });
   }
 
+  /**
+ * Retrieves user chat messages from the API based on specified parameters.
+ *
+ * @param UserId - The ID of the user for whom to retrieve chat messages.
+ * @param Before - Optional. A date used to filter messages before a certain date.
+ * @param count - Optional. The maximum number of messages to retrieve.
+ * @param sortOrder - Optional. The sort order of the messages.
+ * @returns An Observable containing an array of UserChat objects representing chat messages.
+ */
   getUserChat( 
     UserId: string,
     Before: Date | null,
@@ -48,6 +66,14 @@ export class ChatService {
     return this.http.get<UserChat[]>(url, { headers, params });
   }
 
+  /**
+ * Sends a chat message to a specified receiver via a POST request to the API.
+ *
+ * @param receiverId - The ID of the message receiver.
+ * @param content - The content of the chat message.
+ * @returns An Observable representing the result of the message sending process.
+ *          Subscribers can handle the response asynchronously.
+ */
   sendMessage(receiverId: string, content: string): Observable<any> {
     const url = `${this.apiUrl}messages`;
     const headers = this.getHeaders();
@@ -59,6 +85,14 @@ export class ChatService {
     return this.http.post(url, body, { headers });
   }
 
+  /**
+ * Updates the content of a chat message via a PUT request to the API.
+ *
+ * @param messageId - The ID of the message to be updated.
+ * @param content - The new content for the chat message.
+ * @returns An Observable representing the result of the message update process.
+ *          Subscribers can handle the response asynchronously.
+ */
   updateMessageContent(messageId: number, content: string): Observable<any> {
     const url = `${this.apiUrl}messages/${messageId}`;
     const headers = this.getHeaders();
@@ -67,14 +101,28 @@ export class ChatService {
     return this.http.put(url, body, { headers });
   }
 
+  /**
+ * Deletes a chat message via a DELETE request to the API.
+ *
+ * @param messageId - The ID of the message to be deleted.
+ * @returns An Observable representing the result of the message deletion process.
+ *          Subscribers can handle the response asynchronously.
+ */
   deleteMessage(messageId: number): Observable<any> {
     const url = `${this.apiUrl}messages/${messageId}`;
     const headers = this.getHeaders();
 
     return this.http.delete(url, { headers });
   }
- 
 
+  /**
+ * Retrieves log data from the API within a specified time range.
+ *
+ * @param startTime - Optional. The start time for filtering log entries.
+ * @param endTime - Optional. The end time for filtering log entries.
+ * @returns An Observable containing log data based on the specified time range.
+ *          Subscribers can handle the response asynchronously.
+ */
   fetchLogs(startTime?: Date | null, endTime?: Date | null): Observable<any> {
     const url = `${this.apiUrl}log`;
     const headers = new HttpHeaders({
@@ -94,6 +142,13 @@ export class ChatService {
 
     return this.http.get<any>(url, { headers, params });
   }
+
+  /**
+ * Formats a JavaScript Date object into a string representation with a specific format.
+ *
+ * @param date - The Date object to be formatted.
+ * @returns A formatted string representation of the date and time.
+ */
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
