@@ -53,6 +53,9 @@
   background-color: #673ab7;
 }
 
+.row>* {
+  padding-right:0px !important;
+}
 
 .message-wrapper {
   display: flex;
@@ -86,6 +89,10 @@
   border-top: 1px solid #ccc;
   position: sticky;
   bottom: 0; 
+}
+
+.row {
+  margin-top: -12px
 }
 
 .input-box {
