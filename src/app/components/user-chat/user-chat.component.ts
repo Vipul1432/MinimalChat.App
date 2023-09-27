@@ -63,9 +63,49 @@ export class UserChatComponent implements OnChanges {
     });
   }
 
+  /**
+   * Searches for chat messages based on a keyword and updates the user's chat messages accordingly.
+   * If a valid keyword is provided, it filters messages containing the keyword;
+   * otherwise, it retrieves all user chat messages.
+   *
+   * @param keyword - The keyword to search for in chat messages.
+   */
+  searchMessages(keyword: string): void {
+    if (keyword !== null && keyword.length > 0 && keyword !== '') {
+      this.chatService.searchMessages(keyword, this.userId).subscribe(
+        (response: any) => {
+          this.userChat = response.messages;
+        },
+        (error) => {
+          this.userChat = [];
+          this.toasterService.warning({
+            detail: 'WARN',
+            summary: error.error.message,
+            duration: 3000,
+            position: 'bottomRight',
+          });
+          console.clear();
+        }
+      );
+    } else {
+      this.chatService
+        .getUserChat(this.userId, null, null, null)
+        .subscribe((messages: any) => {
+          this.userChat = messages.data || [];
+          this.topTimestamp =
+            this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
+        });
+    }
+  }
+
+  /**
+   * Lifecycle hook called after the view has been initialized.
+   * Automatically scrolls the chat messages container to the bottom.
+   */
   ngAfterViewInit() {
     this.scrollToBottom();
   }
+
   @ViewChild('messageContainerRef', { static: false })
   messageContainerRef!: ElementRef;
 
@@ -134,8 +174,6 @@ export class UserChatComponent implements OnChanges {
       .getUserChat(this.userId, topTimestamp, null, null)
       .subscribe(
         (messages: any) => {
-          console.log(messages);
-
           if (topTimestamp === null) {
             this.userChat = messages.data;
             this.toasterService.success({
@@ -155,7 +193,6 @@ export class UserChatComponent implements OnChanges {
         },
         (error: any) => {
           if (error.status === 400) {
-            console.log(error.error.message);
           }
         }
       );
@@ -193,7 +230,6 @@ export class UserChatComponent implements OnChanges {
                 this.messageInput = '';
               });
           } else {
-            console.error('Failed to send message:', response.error);
           }
         });
     }
@@ -260,9 +296,7 @@ export class UserChatComponent implements OnChanges {
               });
           }
         },
-        (error) => {
-          console.error('Failed to update message content:', error);
-        }
+        (error) => {}
       );
   }
 
@@ -272,7 +306,6 @@ export class UserChatComponent implements OnChanges {
    * @param message - The UserChat message to be deleted.
    */
   deleteMessage(message: UserChat) {
-    console.log(message.content);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -293,7 +326,6 @@ export class UserChatComponent implements OnChanges {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          console.log('yes!' + message.id);
           this.chatService.deleteMessage(message.id).subscribe(() => {
             this.chatService
               .getUserChat(this.userId, null, null, null)
