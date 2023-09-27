@@ -1,3 +1,5 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 <section style="background-color: #eee;">
   <div class="container">
     <div class="row d-flex justify-content-center">
@@ -10,6 +12,8 @@
               <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
+            <input type="text" class="form-control form-control-sm ms-3 w-25 ms-auto me-2 fontAwesome"
+                  placeholder="Search messages" (keyup)="searchMessages(searchInput.value)" #searchInput/>
           </div>
           <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #scrollBarContainer>
             <div class="d-flex flex-column justify-content-start" #messageContainerRef>
