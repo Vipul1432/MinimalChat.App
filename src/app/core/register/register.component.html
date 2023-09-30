@@ -40,6 +40,7 @@
                 <mat-error *ngIf="registrationForm.get('confirmpassword')!.hasError('required')">Confirm Password is required</mat-error>
                 <mat-error *ngIf="registrationForm.hasError('passwordMismatch')">Passwords do not match</mat-error>
             </mat-form-field> 
+            <div id="buttonDiv"></div> 
             <p>Already have an account? <a href="/login">Login</a></p>     
           <div class="submit-button">
             <button mat-raised-button color="primary" type="submit" [disabled]="!registrationForm.valid">Register</button>

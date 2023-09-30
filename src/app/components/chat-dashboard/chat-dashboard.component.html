@@ -1,10 +1,23 @@
+<!-- Display the search input and close button -->
+<input type="text" class="form-control custom-input form-control-sm ps-3 mb-4"
+             style="font-family: Arial, Font Awesome\ 5 Free; font-weight: 600;"
+       placeholder="&#xf002; Search messages" (keyup)="searchMessages(searchInput.value)" #searchInput/>
 
+<!-- Display user list or search results based on showUserList and showSearchResults flags -->
 <div class="chat-dashboard">
-    <div class="user-list">
-      <app-user-list *ngIf="showUserList" (userClicked)="onUserClicked($event.userId, $event.name)"></app-user-list>
-    </div>
-    <div class="user-chat">
-      <app-user-chat [userId]="selectedUserId" [name] = "selectedUserName"></app-user-chat>
-    </div>
+  <div class="user-list" *ngIf="showUserList">
+    <app-user-list (userClicked)="onUserClicked($event.userId, $event.name)"></app-user-list>
   </div>
-  
+  <div *ngIf="showSearchResults" class="search-results">
+    <ul>
+      <span *ngIf="showSearchResults" class="custom" (click)="closeSearchResults()"><i class="fa-regular fa-circle-xmark"></i></span>
+      <li *ngFor="let chat of userChat" [class.sender-message]="chat.senderId === currentUserId" [class.receiver-message]="chat.senderId !== currentUserId">
+        {{ chat.content }}
+        <p class="message-timestamp m-0 p-0"><small>{{ chat.timestamp.toString() | dateTimeFormat }}</small></p>
+      </li>
+    </ul>
+  </div>
+  <div class="user-chat">
+    <app-user-chat [userId]="selectedUserId" [name]="selectedUserName"></app-user-chat>
+  </div>
+</div>
