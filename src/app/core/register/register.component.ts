@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { passwordMatchValidator } from 'src/app/_helpers/validators/password-match.validator';
 import { RegistrationModel } from 'src/app/_shared/models/RegistrationModel';
 import { AuthService } from 'src/app/_shared/services/auth.service';
+import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
+import { environment } from '../../_shared/environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -16,12 +18,14 @@ export class RegisterComponent {
   hideConfirmPassword = true;
   registrationForm: FormGroup;
   registrationResult: any;
+  private clientId = environment.clientId;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private toasterService: NgToastService,
-    private router: Router
+    private router: Router,
+    private _ngZone: NgZone
   ) {
     this.registrationForm = this.fb.group(
       {
@@ -49,6 +53,60 @@ export class RegisterComponent {
         validator: passwordMatchValidator('password', 'confirmpassword'),
       }
     );
+  }
+
+  /**
+   * Angular lifecycle hook called when the component is initialized.
+   * Initializes and renders a Google Sign-In button.
+   */
+  ngOnInit(): void {
+    // @ts-ignore
+    window.onGoogleLibraryLoad = () => {
+      // @ts-ignore
+      google.accounts.id.initialize({
+        client_id: this.clientId,
+        callback: this.handleCredentialResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      // @ts-ignore
+      google.accounts.id.renderButton(
+        // @ts-ignore
+        document.getElementById('buttonDiv'),
+        { theme: 'outline', size: 'large', width: '100%' }
+      );
+      // @ts-ignore
+      google.accounts.id.prompt((notification: PromptMomentNotification) => {});
+    };
+  }
+
+  /**
+   * Handles the response received after a Google Sign-In attempt.
+   *
+   * @param response - The response object containing credential information.
+   */
+  private handleCredentialResponse(response: CredentialResponse) {
+    this.authService
+      .LoginWithGoogle(response.credential)
+      .subscribe((x: any) => {
+        this._ngZone.run(() => {
+          if (x.statusCode === 200) {
+            this.toasterService.success({
+              detail: 'SUCCESS',
+              summary: `Login successful`,
+              duration: 5000,
+            });
+
+            this.router.navigateByUrl('/login');
+          } else {
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: 'Login failed',
+              sticky: true,
+            });
+          }
+        });
+      });
   }
 
   /**

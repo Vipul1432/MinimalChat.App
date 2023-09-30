@@ -35,23 +35,23 @@ mat-error {
 
 .password-confirm-field {
     margin-top: 10px; 
-  }
+}
 
-  .password-container {
+.password-container {
     display: flex;
     flex-direction: column;
     margin-bottom: 16px;
-  }
+}
 
-  .password-error {
+.password-error {
     margin-top: 16px;
-  }
+}
 
-  mat-form-field {
-    margin-bottom: 16px;
-  }
+mat-form-field {
+    margin-bottom: 16px;    
+}
 
-  .login-link {
+.login-link {
     text-align: center;
     margin-top: 20px;
     font-size: 16px;
@@ -65,4 +65,9 @@ mat-error {
 
 .login-button:hover {
     text-decoration: underline;
+}
+
+#buttonDiv {
+    display: flex;
+    justify-content: center;
 }

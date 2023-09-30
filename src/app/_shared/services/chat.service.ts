@@ -214,12 +214,10 @@ export class ChatService {
    * @param userId - The ID of the user for whom to search messages.
    * @returns An Observable containing an array of UserChat objects representing matching chat messages.
    */
-  searchMessages(query: string, receiverId: string): Observable<UserChat[]> {
+  searchMessages(query: string): Observable<UserChat[]> {
     const url = `${this.apiUrl}conversation/search`;
     const headers = this.getHeaders();
-    const params = new HttpParams()
-      .set('query', query)
-      .set('receiverId', receiverId);
+    const params = new HttpParams().set('query', query);
 
     return this.http.get<UserChat[]>(url, { headers, params });
   }

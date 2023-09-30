@@ -50,8 +50,6 @@ export class LogListComponent implements OnInit {
       .subscribe(
         (response: any) => {
           this.logs = response.data;
-          console.log(this.logs);
-          
           this.dataSource = new MatTableDataSource(this.logs); 
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -72,7 +70,6 @@ export class LogListComponent implements OnInit {
  */
   onTimeframeChange(): void {
     if (this.selectedTimeframe === 'custom' && this.startTime !== null && this.endTime !== null) {
-
       console.log('Custom Start Time:', this.startTime);
       console.log('Custom End Time:', this.endTime);
     } else if (this.selectedTimeframe != 'custom') {

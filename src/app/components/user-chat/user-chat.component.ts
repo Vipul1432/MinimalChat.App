@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { ActivatedRoute } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { EditMessageDialogComponent } from 'src/app/_helpers/edit-message-dialog/edit-message-dialog.component';
 import { UserChat } from 'src/app/_shared/models/UserChat';
@@ -37,7 +38,8 @@ export class UserChatComponent implements OnChanges {
     private chatService: ChatService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private toasterService: NgToastService
+    private toasterService: NgToastService,
+    private route: ActivatedRoute
   ) {
     this.currentUserName = this.authService.getUserName();
   }
@@ -63,40 +65,6 @@ export class UserChatComponent implements OnChanges {
     });
   }
 
-  /**
-   * Searches for chat messages based on a keyword and updates the user's chat messages accordingly.
-   * If a valid keyword is provided, it filters messages containing the keyword;
-   * otherwise, it retrieves all user chat messages.
-   *
-   * @param keyword - The keyword to search for in chat messages.
-   */
-  searchMessages(keyword: string): void {
-    if (keyword !== null && keyword.length > 0 && keyword !== '') {
-      this.chatService.searchMessages(keyword, this.userId).subscribe(
-        (response: any) => {
-          this.userChat = response.messages;
-        },
-        (error) => {
-          this.userChat = [];
-          this.toasterService.warning({
-            detail: 'WARN',
-            summary: error.error.message,
-            duration: 3000,
-            position: 'bottomRight',
-          });
-          console.clear();
-        }
-      );
-    } else {
-      this.chatService
-        .getUserChat(this.userId, null, null, null)
-        .subscribe((messages: any) => {
-          this.userChat = messages.data || [];
-          this.topTimestamp =
-            this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
-        });
-    }
-  }
 
   /**
    * Lifecycle hook called after the view has been initialized.
@@ -174,16 +142,18 @@ export class UserChatComponent implements OnChanges {
       .getUserChat(this.userId, topTimestamp, null, null)
       .subscribe(
         (messages: any) => {
-          if (topTimestamp === null) {
-            this.userChat = messages.data;
-            this.toasterService.success({
-              detail: 'SUCCESS',
-              summary: '20 more messagse retrieve successfully!',
-              duration: 5000,
-            });
-          } else {
-            // Append the new messages to the existing ones
-            this.userChat = [...messages.data, ...this.userChat];
+          if (messages.data && Array.isArray(messages.data)) {
+            if (topTimestamp === null) {
+              this.userChat = messages.data;
+              this.toasterService.success({
+                detail: 'SUCCESS',
+                summary: '20 more messages retrieved successfully!',
+                duration: 5000,
+              });
+            } else {
+              // Append the new messages to the existing ones
+              this.userChat = [...messages.data, ...this.userChat];
+            }
           }
 
           // Update the top timestamp
@@ -193,6 +163,7 @@ export class UserChatComponent implements OnChanges {
         },
         (error: any) => {
           if (error.status === 400) {
+            console.log(`error message` + error.error.message);
           }
         }
       );

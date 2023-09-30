@@ -41,9 +41,9 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     NgToastModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
