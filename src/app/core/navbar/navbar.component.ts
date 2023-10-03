@@ -34,13 +34,13 @@ export class NavbarComponent {
    */
   async checkAuthentication() {
     // If the user is authenticated, get their name
-    if (this.isAuthenticated) {
-      this.userName = await this.authService.getUserName();
-    } else {
-      if (this.userName == null || this.userName == '') {
-        this.userName = await localStorage.getItem('userName');
-        console.log(`loggg` + this.userName);
+    if (this.userName == null || this.userName == '') {
+      this.userName = await localStorage.getItem('userName');
+      console.log(this.userName);
+      if (this.userName != null) {
         this.isAuthenticated = true;
+      } else {
+        this.isAuthenticated = false;
       }
     }
   }

@@ -9,7 +9,7 @@ import { NgToastModule } from 'ng-angular-popup';
 import { NavbarComponent } from './core/navbar/navbar.component';
 import { RegisterComponent } from './core/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './core/login/login.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { ChatDashboardComponent } from './components/chat-dashboard/chat-dashboard.component';
@@ -18,6 +18,8 @@ import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-
 import { LogListComponent } from './components/log-list/log-list.component';
 import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AuthInterceptor } from './_shared/interceptor/auth.interceptor';
+import { AuthGuard } from './_helpers/auth-guard/auth.guard';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,14 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     HttpClientModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    AuthGuard,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
