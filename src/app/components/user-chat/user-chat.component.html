@@ -12,8 +12,8 @@
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
           </div>
-          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #scrollBarContainer>
-            <div class="d-flex flex-column justify-content-start" #messageContainerRef>
+          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #messageContainerRef>
+            <div class="d-flex flex-column justify-content-start">
               <!-- Messages for current user -->
               <ng-container *ngFor="let message of userChat">
                 <div *ngIf="!isSender(message); else receiverContent" class="d-flex flex-row justify-content-end pt-1">

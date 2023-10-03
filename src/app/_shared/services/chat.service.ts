@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { UserChat } from '../models/UserChat';
@@ -61,28 +61,6 @@ export class ChatService {
   }
 
   /**
-   * Retrieves a JSON Web Token (JWT) from local storage.
-   *
-   * @returns The JWT token as a string if it's stored in local storage, or null if not found.
-   */
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  /**
-   * Creates and returns HttpHeaders with the necessary authentication headers.
-   *
-   * @returns HttpHeaders object with "Content-Type" and "Authorization" headers.
-   */
-  private getHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    });
-  }
-
-  /**
    * Retrieves user chat messages from the API based on specified parameters.
    *
    * @param UserId - The ID of the user for whom to retrieve chat messages.
@@ -98,7 +76,6 @@ export class ChatService {
     sortOrder: number | null
   ): Observable<UserChat[]> {
     const url = `${this.apiUrl}messages`;
-    const headers = this.getHeaders();
     let params = new HttpParams().set('UserId', UserId);
     if (Before !== null) {
       params = params.set('before', Before.toString());
@@ -109,7 +86,7 @@ export class ChatService {
     if (sortOrder !== null) {
       params = params.set('sortOrder', sortOrder.toString());
     }
-    return this.http.get<UserChat[]>(url, { headers, params });
+    return this.http.get<UserChat[]>(url, { params });
   }
 
   /**
@@ -122,13 +99,12 @@ export class ChatService {
    */
   sendMessage(receiverId: string, content: string): Observable<any> {
     const url = `${this.apiUrl}messages`;
-    const headers = this.getHeaders();
     const body = {
       receiverId: receiverId,
       content: content,
     };
 
-    return this.http.post(url, body, { headers });
+    return this.http.post(url, body);
   }
 
   /**
@@ -141,10 +117,9 @@ export class ChatService {
    */
   updateMessageContent(messageId: number, content: string): Observable<any> {
     const url = `${this.apiUrl}messages/${messageId}`;
-    const headers = this.getHeaders();
     const body = { content };
 
-    return this.http.put(url, body, { headers });
+    return this.http.put(url, body);
   }
 
   /**
@@ -156,9 +131,7 @@ export class ChatService {
    */
   deleteMessage(messageId: number): Observable<any> {
     const url = `${this.apiUrl}messages/${messageId}`;
-    const headers = this.getHeaders();
-
-    return this.http.delete(url, { headers });
+    return this.http.delete(url);
   }
 
   /**
@@ -171,10 +144,6 @@ export class ChatService {
    */
   fetchLogs(startTime?: Date | null, endTime?: Date | null): Observable<any> {
     const url = `${this.apiUrl}log`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
-    });
 
     let params = new HttpParams();
 
@@ -186,7 +155,7 @@ export class ChatService {
       params = params.set('endTime', this.formatDate(endTime!));
     }
 
-    return this.http.get<any>(url, { headers, params });
+    return this.http.get<any>(url, { params });
   }
 
   /**
@@ -216,9 +185,8 @@ export class ChatService {
    */
   searchMessages(query: string): Observable<UserChat[]> {
     const url = `${this.apiUrl}conversation/search`;
-    const headers = this.getHeaders();
     const params = new HttpParams().set('query', query);
 
-    return this.http.get<UserChat[]>(url, { headers, params });
+    return this.http.get<UserChat[]>(url, { params });
   }
 }

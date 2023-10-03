@@ -1,18 +1,27 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../../_shared/services/auth.service'; // You need to have an AuthService for checking the user's login status.
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private router: Router) {}
 
   canActivate(): boolean {
-    if (this.authService.isAuthenticated) {
-      this.router.navigate(['/chat']); 
-      return false;
+    const token = localStorage.getItem('token');
+    if (token) {
+      if (this.router.url === '/login' || this.router.url === '/register') {
+        // Redirect authenticated users away from '/login' and '/register' to '/chat'.
+        console.log(`redirect`);
+        this.router.navigate(['/chat']);
+      }
+      if (this.router.url === '/chat/user/') {
+        console.log(`redirect`);
+        this.router.navigate(['/chat/user/']);
+      }
+      return true;
     }
-    return true;
+    this.router.navigate(['/login']);
+    return false;
   }
 }

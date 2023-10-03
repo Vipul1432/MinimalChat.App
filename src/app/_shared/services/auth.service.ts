@@ -11,7 +11,7 @@ import jwt_decode from 'jwt-decode';
 export class AuthService {
   private apiUrl = environment.apiUrl;
   isAuthenticated = false;
-  private userName: string | null = null;
+  userName: string | null = null;
   private currentUserId: string | null = null;
   private isAuthenticatedSubject = new Subject<boolean>();
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -70,6 +70,12 @@ export class AuthService {
    */
   getCurrentUserId(): string | null {
     return this.currentUserId;
+  }
+
+  setAuthenticationStatus(isAuthenticated: boolean) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    this.isAuthenticatedSubject.next(isAuthenticated);
   }
 
   /**

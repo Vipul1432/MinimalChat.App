@@ -1,15 +1,14 @@
 import {
+  AfterViewChecked,
   Component,
   ElementRef,
   HostListener,
   Input,
-  OnChanges,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { ActivatedRoute } from '@angular/router';
 import { NgToastService } from 'ng-angular-popup';
 import { EditMessageDialogComponent } from 'src/app/_helpers/edit-message-dialog/edit-message-dialog.component';
 import { UserChat } from 'src/app/_shared/models/UserChat';
@@ -22,7 +21,7 @@ import Swal from 'sweetalert2';
   templateUrl: './user-chat.component.html',
   styleUrls: ['./user-chat.component.css'],
 })
-export class UserChatComponent implements OnChanges {
+export class UserChatComponent implements AfterViewChecked {
   userChat: UserChat[] = [];
   topTimestamp: Date = new Date();
   @Input() userId: string = '';
@@ -38,8 +37,7 @@ export class UserChatComponent implements OnChanges {
     private chatService: ChatService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private toasterService: NgToastService,
-    private route: ActivatedRoute
+    private toasterService: NgToastService
   ) {
     this.currentUserName = this.authService.getUserName();
   }
@@ -65,12 +63,11 @@ export class UserChatComponent implements OnChanges {
     });
   }
 
-
   /**
    * Lifecycle hook called after the view has been initialized.
    * Automatically scrolls the chat messages container to the bottom.
    */
-  ngAfterViewInit() {
+  ngAfterViewChecked() {
     this.scrollToBottom();
   }
 
@@ -108,8 +105,8 @@ export class UserChatComponent implements OnChanges {
    */
   private scrollToBottom() {
     if (this.messageContainerRef) {
-      this.messageContainerRef.nativeElement.scrollTop =
-        this.messageContainerRef.nativeElement.scrollHeight;
+      const container = this.messageContainerRef.nativeElement;
+      container.scrollTop = container.scrollHeight;
     }
   }
 
