@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Remove Users</h2>
+<mat-dialog-content>
+  <ul>
+    <div *ngFor="let user of users">
+      {{ user.userName }}
+      <button mat-icon-button (click)="removeUser(user)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+  </ul>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</mat-dialog-actions>

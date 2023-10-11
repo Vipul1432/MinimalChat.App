@@ -37,4 +37,15 @@ export class GroupChatService {
     const url = `${this.apiUrl}${groupId}/add-member`;
     return this.http.post(url, memberIds);
   }
+
+  /**
+   * Sends a request to remove a member from a group, specified by their ID.
+   * The request is made to the server using a POST request, with the member's ID passed as a query parameter.
+   * Returns an observable for handling the result of the removal operation.
+   */
+  removeMemberFromGroup(groupId: string, memberId: string): Observable<any> {
+    const url = `${this.apiUrl}${groupId}/remove-member`;
+    const params = { memberId: memberId };
+    return this.http.post(url, null, { params: params });
+  }
 }

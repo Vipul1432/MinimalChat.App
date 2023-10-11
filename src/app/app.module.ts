@@ -24,6 +24,7 @@ import { TokenInterceptor } from './_shared/interceptor/token.interceptor';
 import { CreateGroupDialogComponent } from './_helpers/create-group-dialog/create-group-dialog/create-group-dialog.component';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-members-dialog.component';
+import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-mem
     NotFoundComponent,
     CreateGroupDialogComponent,
     AddMembersDialogComponent,
+    RemoveUserDialogComponent,
   ],
   imports: [
     BrowserModule,

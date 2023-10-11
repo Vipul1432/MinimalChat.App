@@ -20,6 +20,7 @@ import { ChatService } from 'src/app/_shared/services/chat.service';
 import Swal from 'sweetalert2';
 import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 import { catchError, throwError } from 'rxjs';
+import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
 
 @Component({
   selector: 'app-user-chat',
@@ -347,7 +348,6 @@ export class UserChatComponent implements AfterViewChecked {
     dialogRef.afterClosed().subscribe(
       (result: User[]) => {
         const userIds: string[] = result.map((user) => user.id);
-        console.log(userIds);
         this.groupChatService
           .addMembersToGroup(this.userId, userIds)
           .subscribe((response) => {
@@ -404,4 +404,37 @@ export class UserChatComponent implements AfterViewChecked {
       });
     this.scrollToBottom();
   }
+
+  /**
+   * Opens a confirmation dialog to remove a member from the group.
+   * Upon confirmation, sends a request to the groupChatService to remove the specified member from the group.
+   * If successful, triggers a chat data update by calling `fetchChatwithGroupMembers`.
+   * Handles errors by displaying an error notification using `toasterService`.
+   */
+  removeMember() {
+    const dialogRef = this.dialog.open(RemoveUserDialogComponent, {
+      data: {
+        groupUsers: this.groupmembers,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(
+      (memberId) => {
+        this.groupChatService
+          .removeMemberFromGroup(this.userId, memberId)
+          .subscribe((result: any) => {
+            this.fetchChatwithGroupMembers();
+          });
+      },
+      (error) => {
+        this.toasterService.error({
+          detail: 'ERROR',
+          summary: 'Error while removing members from the group:' + error,
+          sticky: true,
+        });
+      }
+    );
+  }
+
+  editGroupName() {}
 }
