@@ -6,7 +6,7 @@
   }
   
   .user-list {
-    width: 25%;
+    min-width: 25%;
     background-color: #f0f0f0;
     overflow: auto; 
     height: 100%;

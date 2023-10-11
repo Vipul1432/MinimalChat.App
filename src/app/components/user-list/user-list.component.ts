@@ -2,6 +2,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from 'src/app/_shared/models/User';
 import { UserService } from 'src/app/_shared/services/user.service';
 import { NgToastService } from 'ng-angular-popup';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateGroupDialogComponent } from 'src/app/_helpers/create-group-dialog/create-group-dialog/create-group-dialog.component';
+import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 
 @Component({
   selector: 'app-user-list',
@@ -26,7 +29,9 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private toasterService: NgToastService
+    private toasterService: NgToastService,
+    private dialog: MatDialog,
+    private groupChatService: GroupChatService
   ) {}
 
   /**
@@ -34,6 +39,10 @@ export class UserListComponent implements OnInit {
    * Fetches a list of users and performs necessary operations.
    */
   ngOnInit() {
+    this.getAllUsers();
+  }
+
+  getAllUsers() {
     // Fetch all users
     this.userService.getAllUsers().subscribe(
       (response: any) => {
@@ -44,11 +53,6 @@ export class UserListComponent implements OnInit {
             this.userBackgroundColors = this.generateRandomColors(
               this.users.length
             );
-          });
-          this.toasterService.success({
-            detail: 'SUCCESS',
-            summary: `Users fetched successfully`,
-            duration: 5000,
           });
         } else {
           this.toasterService.error({
@@ -102,5 +106,41 @@ export class UserListComponent implements OnInit {
    */
   onUserClick(userId: string, name: string): void {
     this.userClicked.emit({ userId, name });
+  }
+  createGroup() {
+    const usersWithoutGroup = this.users.filter((user) => user.email !== null);
+    const dialogRef = this.dialog.open(CreateGroupDialogComponent, {
+      width: '400px', // Set the desired width
+      data: {
+        users: usersWithoutGroup, // Pass the list of users to the dialog component
+      },
+    });
+
+    // Subscribe to the dialog's result
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const { groupName, selectedUsers } = result;
+        this.groupChatService.createGroup(groupName, selectedUsers).subscribe(
+          (response) => {
+            console.log(response);
+            this.getAllUsers();
+            this.toasterService.success({
+              detail: 'SUCCESS',
+              summary: response.data.name + ' Group created successfully',
+              duration: 5000,
+            });
+          },
+          (error) => {
+            // Handle an error response from the service (e.g., display an error message)
+            console.error('Error creating group:', error);
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: 'Failed to create group',
+              sticky: true,
+            });
+          }
+        );
+      }
+    });
   }
 }

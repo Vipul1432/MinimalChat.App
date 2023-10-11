@@ -20,6 +20,9 @@ import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { AuthInterceptor } from './_shared/interceptor/auth.interceptor';
 import { AuthGuard } from './_helpers/auth-guard/auth.guard';
+import { TokenInterceptor } from './_shared/interceptor/token.interceptor';
+import { CreateGroupDialogComponent } from './_helpers/create-group-dialog/create-group-dialog/create-group-dialog.component';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -34,6 +37,7 @@ import { AuthGuard } from './_helpers/auth-guard/auth.guard';
     LogListComponent,
     DateTimeFormatPipe,
     NotFoundComponent,
+    CreateGroupDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,12 +50,14 @@ import { AuthGuard } from './_helpers/auth-guard/auth.guard';
     FormsModule,
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptor,
+    //   multi: true,
+    // },
     AuthGuard,
+    { provide: MAT_DIALOG_DATA, useValue: {} },
   ],
   bootstrap: [AppComponent],
 })

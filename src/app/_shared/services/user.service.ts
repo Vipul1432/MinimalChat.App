@@ -18,7 +18,8 @@ export class UserService {
    *          Subscribers can handle the response asynchronously.
    */
   getAllUsers(): Observable<User[]> {
-    const url = `${this.apiUrl}users`;
+    let isOnlyUserList: Boolean = false;
+    const url = `${this.apiUrl}users?isOnlyUserList=${isOnlyUserList}`;
     return this.http.get<User[]>(url);
   }
 }

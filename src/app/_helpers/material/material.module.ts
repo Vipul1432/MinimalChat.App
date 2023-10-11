@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
@@ -16,14 +15,12 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   exports: [
-    
     MatInputModule,
     MatButtonModule,
     MatIconModule,
@@ -38,8 +35,8 @@ import { MatSortModule } from '@angular/material/sort';
     NgxMaterialTimepickerModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
-    
-  ]
+    MatSortModule,
+    MatCheckboxModule,
+  ],
 })
-export class MaterialModule { }
+export class MaterialModule {}

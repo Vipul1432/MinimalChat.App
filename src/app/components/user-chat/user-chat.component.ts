@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { NgToastService } from 'ng-angular-popup';
 import { EditMessageDialogComponent } from 'src/app/_helpers/edit-message-dialog/edit-message-dialog.component';
+import { GroupMembers } from 'src/app/_shared/models/GroupMembers';
 import { UserChat } from 'src/app/_shared/models/UserChat';
 import { AuthService } from 'src/app/_shared/services/auth.service';
 import { ChatService } from 'src/app/_shared/services/chat.service';
@@ -32,6 +33,8 @@ export class UserChatComponent implements AfterViewChecked {
   currentUserName: string | null = '';
   messageInput: string = '';
   selectedMessage: UserChat | null = null;
+  groupmembers: GroupMembers[] = [];
+  isReceiverIdNull: boolean = false;
 
   constructor(
     private chatService: ChatService,
@@ -57,6 +60,8 @@ export class UserChatComponent implements AfterViewChecked {
         .getUserChat(this.userId, null, null, null)
         .subscribe((messages: any) => {
           this.userChat = messages.data || [];
+          console.log(messages.data);
+
           this.topTimestamp =
             this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
         });
@@ -90,6 +95,11 @@ export class UserChatComponent implements AfterViewChecked {
           .getUserChat(this.userId, null, null, null)
           .subscribe((messages: any) => {
             this.userChat = messages.data || [];
+
+            this.groupmembers = messages.data[0].users;
+            console.log(`members` + this.groupmembers[0].userName);
+            console.log(`test` + this.getNamesSeparatedByComma());
+
             this.topTimestamp =
               this.userChat.length > 0
                 ? this.userChat[0].timestamp
@@ -318,5 +328,12 @@ export class UserChatComponent implements AfterViewChecked {
           );
         }
       });
+  }
+
+  getNamesSeparatedByComma(): string {
+    const names = this.groupmembers
+      .filter((members) => !members.userName)
+      .map((members) => members.userName);
+    return names.join(', ');
   }
 }
