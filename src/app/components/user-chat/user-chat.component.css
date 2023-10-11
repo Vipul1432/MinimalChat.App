@@ -147,3 +147,12 @@
   font-weight: bold;
 }
 
+button.mat-icon-button {
+  margin-right: 0px; /* Push the button to the right end */
+}
+
+.sticky-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
