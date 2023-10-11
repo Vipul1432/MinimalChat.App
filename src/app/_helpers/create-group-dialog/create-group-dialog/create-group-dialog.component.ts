@@ -20,10 +20,19 @@ export class CreateGroupDialogComponent {
       .map((user: any) => user.id);
   }
 
+  /**
+   * Handles the cancel action in the dialog.
+   * - Closes the dialog without saving any changes.
+   */
   onCancelClick(): void {
     this.dialogRef.close(); // Close the dialog without saving
   }
 
+  /**
+   * Handles the action of creating a new group.
+   * - Collects the group name and selected users' data.
+   * - Closes the dialog and provides the group data to the caller.
+   */
   onCreateGroupClick(): void {
     const groupData = {
       groupName: this.groupName,
@@ -34,6 +43,10 @@ export class CreateGroupDialogComponent {
     this.dialogRef.close(groupData);
   }
 
+  /**
+   * Handles changes in the checkbox state for a user.
+   * - Adds or removes the user's ID to/from the selected users list.
+   */
   onCheckboxChange(user: any): void {
     if (user.selected) {
       console.log(user.id);
@@ -49,9 +62,18 @@ export class CreateGroupDialogComponent {
     }
   }
 
+  /**
+   * Tracks users in the list by their user ID.
+   * - Provides a unique identifier for ngFor to track users efficiently.
+   */
   trackByUserId(index: number, user: any): string {
     return user.id;
   }
+
+  /**
+   * Retrieves the list of selected users.
+   * - Returns the selected users' IDs.
+   */
   getSelectedUsers(): string[] {
     console.log(this.selectedUsers);
     return this.selectedUsers;
