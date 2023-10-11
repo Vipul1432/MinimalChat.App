@@ -25,6 +25,7 @@ import { CreateGroupDialogComponent } from './_helpers/create-group-dialog/creat
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-members-dialog.component';
 import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-user-dialog.component';
+import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-
     CreateGroupDialogComponent,
     AddMembersDialogComponent,
     RemoveUserDialogComponent,
+    EditGroupNameDialogComponent,
   ],
   imports: [
     BrowserModule,
