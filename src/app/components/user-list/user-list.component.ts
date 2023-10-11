@@ -44,7 +44,7 @@ export class UserListComponent implements OnInit {
 
   getAllUsers() {
     // Fetch all users
-    this.userService.getAllUsers().subscribe(
+    this.userService.getAllUsers(false).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           this.users = response.data;

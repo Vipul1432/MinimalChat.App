@@ -134,3 +134,16 @@
   font-size: larger;
 }
 
+.group-users {
+  display: inline;
+  margin-top: 10px;
+  margin-left: 5px;
+  color: white !important;
+}
+
+.admin::after {
+  content: ' *';
+  color: #e91e63 !important;
+  font-weight: bold;
+}
+

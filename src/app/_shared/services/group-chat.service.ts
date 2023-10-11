@@ -20,4 +20,9 @@ export class GroupChatService {
 
     return this.http.post(url, body);
   }
+
+  addMembersToGroup(groupId: string, memberIds: string[]): Observable<any> {
+    const url = `${this.apiUrl}${groupId}/add-member`;
+    return this.http.post(url, memberIds);
+  }
 }

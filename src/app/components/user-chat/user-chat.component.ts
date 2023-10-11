@@ -10,12 +10,16 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { NgToastService } from 'ng-angular-popup';
+import { AddMembersDialogComponent } from 'src/app/_helpers/add-members-dialog/add-members-dialog.component';
 import { EditMessageDialogComponent } from 'src/app/_helpers/edit-message-dialog/edit-message-dialog.component';
 import { GroupMembers } from 'src/app/_shared/models/GroupMembers';
 import { UserChat } from 'src/app/_shared/models/UserChat';
+import { User } from 'src/app/_shared/models/User';
 import { AuthService } from 'src/app/_shared/services/auth.service';
 import { ChatService } from 'src/app/_shared/services/chat.service';
 import Swal from 'sweetalert2';
+import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-user-chat',
@@ -31,18 +35,23 @@ export class UserChatComponent implements AfterViewChecked {
   isLoading!: boolean;
   selectedUserName: string = '';
   currentUserName: string | null = '';
+  currentUserId: string | null = '';
   messageInput: string = '';
   selectedMessage: UserChat | null = null;
   groupmembers: GroupMembers[] = [];
-  isReceiverIdNull: boolean = false;
+  isReceiverIdNull: boolean = true;
+  groupUsers: string[] = [];
+  isCurrentUserAdminInGroup: boolean = false;
 
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private toasterService: NgToastService
+    private toasterService: NgToastService,
+    private groupChatService: GroupChatService
   ) {
     this.currentUserName = this.authService.getUserName();
+    this.currentUserId = this.authService.getCurrentUserId();
   }
 
   /**
@@ -91,21 +100,7 @@ export class UserChatComponent implements AfterViewChecked {
       }
       // Fetch user chat data using the new userId
       if (this.userId) {
-        this.chatService
-          .getUserChat(this.userId, null, null, null)
-          .subscribe((messages: any) => {
-            this.userChat = messages.data || [];
-
-            this.groupmembers = messages.data[0].users;
-            console.log(`members` + this.groupmembers[0].userName);
-            console.log(`test` + this.getNamesSeparatedByComma());
-
-            this.topTimestamp =
-              this.userChat.length > 0
-                ? this.userChat[0].timestamp
-                : new Date();
-          });
-        this.scrollToBottom();
+        this.fetchChatwithGroupMembers();
       }
     }
   }
@@ -150,7 +145,10 @@ export class UserChatComponent implements AfterViewChecked {
       .subscribe(
         (messages: any) => {
           if (messages.data && Array.isArray(messages.data)) {
-            if (topTimestamp === null) {
+            if (
+              topTimestamp === null &&
+              messages.message == 'No more conversation found.'
+            ) {
               this.userChat = messages.data;
               this.toasterService.success({
                 detail: 'SUCCESS',
@@ -330,10 +328,66 @@ export class UserChatComponent implements AfterViewChecked {
       });
   }
 
-  getNamesSeparatedByComma(): string {
-    const names = this.groupmembers
-      .filter((members) => !members.userName)
-      .map((members) => members.userName);
-    return names.join(', ');
+  addMembers() {
+    // Open the dialog and pass data to it (e.g., groupUsers)
+    const dialogRef = this.dialog.open(AddMembersDialogComponent, {
+      data: {
+        groupUsers: this.groupmembers,
+      },
+    });
+
+    // Handle dialog actions as needed
+    dialogRef.afterClosed().subscribe(
+      (result: User[]) => {
+        const userIds: string[] = result.map((user) => user.id);
+        console.log(userIds);
+        this.groupChatService
+          .addMembersToGroup(this.userId, userIds)
+          .subscribe((response) => {
+            this.fetchChatwithGroupMembers();
+            this.toasterService.success({
+              detail: 'SUCCESS',
+              summary: response.message,
+              duration: 5000,
+            });
+          });
+      },
+      (error) => {
+        this.toasterService.error({
+          detail: 'ERROR',
+          summary: 'Error while adding members to the group:' + error,
+          sticky: true,
+        });
+      }
+    );
+  }
+
+  private fetchChatwithGroupMembers() {
+    this.chatService
+      .getUserChat(this.userId, null, null, null)
+      .subscribe((messages: any) => {
+        if (
+          messages.message == 'No more conversation found.' &&
+          messages.data != null
+        ) {
+          this.groupmembers = messages.data;
+          this.groupUsers = this.groupmembers.map((member) => member.userName);
+        } else {
+          this.userChat = messages.data || [];
+        }
+        if (messages.data[0].users != null) {
+          this.groupmembers = messages.data[0].users;
+          this.groupUsers = this.groupmembers.map((member) => member.userName);
+        }
+        const filteredMembers = this.groupmembers.filter(
+          (member: GroupMembers) => member.userId === this.currentUserId
+        );
+        this.isCurrentUserAdminInGroup = filteredMembers.some(
+          (member) => member.isAdmin
+        );
+        this.topTimestamp =
+          this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
+      });
+    this.scrollToBottom();
   }
 }

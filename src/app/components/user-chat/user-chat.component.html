@@ -11,11 +11,16 @@
               <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
-            <div *ngIf="isReceiverIdNull" class="mb-2">
-              <p class="small text-muted">
-                {{ getNamesSeparatedByComma() }}
-              </p>
-            </div>
+            <div *ngIf="isReceiverIdNull" class="">
+              <span *ngFor="let member of groupmembers">
+                <p class="small text-muted group-users" [ngClass]="{'admin': member.isAdmin}" [ngStyle]="{'color': member.isAdmin ? 'green' : 'white'}">
+                  <small>&nbsp;{{ member.userName }}</small>
+                </p>            
+              </span>
+              <button class="btn" (click)="addMembers()" *ngIf="isCurrentUserAdminInGroup">
+                <i class="fas fa-plus"></i> Add Members
+              </button>
+            </div>           
           </div>
           <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #messageContainerRef>
             <div class="d-flex flex-column justify-content-start">
