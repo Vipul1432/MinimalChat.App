@@ -22,6 +22,7 @@ import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 import { catchError, throwError } from 'rxjs';
 import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-chat',
@@ -50,7 +51,8 @@ export class UserChatComponent implements AfterViewChecked {
     private authService: AuthService,
     private dialog: MatDialog,
     private toasterService: NgToastService,
-    private groupChatService: GroupChatService
+    private groupChatService: GroupChatService,
+    private router: Router
   ) {
     this.currentUserName = this.authService.getUserName();
     this.currentUserId = this.authService.getCurrentUserId();
@@ -463,5 +465,46 @@ export class UserChatComponent implements AfterViewChecked {
         });
       }
     );
+  }
+
+  deleteGroup() {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger me-2',
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire(
+            'Deleted!',
+            `${this.selectedUserName} has been deleted.`,
+            'success'
+          );
+          this.groupChatService.deleteGroup(this.userId).subscribe((data) => {
+            console.log(data);
+          });
+          this.router.navigate(['/chat']);
+          console.log('hi');
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(
+            'Cancelled',
+            `${this.selectedUserName} is safe :)`,
+            'error'
+          );
+        }
+      });
   }
 }

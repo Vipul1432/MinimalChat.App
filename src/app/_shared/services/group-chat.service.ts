@@ -54,4 +54,9 @@ export class GroupChatService {
     const params = { newName: newName };
     return this.http.put(url, null, { params: params });
   }
+
+  deleteGroup(groupId: string): Observable<any> {
+    const url = `${this.apiUrl}${groupId}/delete-group`;
+    return this.http.delete(url);
+  }
 }
