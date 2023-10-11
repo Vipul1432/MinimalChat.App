@@ -17,8 +17,7 @@ export class UserService {
    * @returns An Observable containing an array of User objects representing users.
    *          Subscribers can handle the response asynchronously.
    */
-  getAllUsers(): Observable<User[]> {
-    let isOnlyUserList: Boolean = false;
+  getAllUsers(isOnlyUserList:boolean): Observable<User[]> {
     const url = `${this.apiUrl}users?isOnlyUserList=${isOnlyUserList}`;
     return this.http.get<User[]>(url);
   }

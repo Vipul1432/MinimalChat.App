@@ -23,6 +23,7 @@ import { AuthGuard } from './_helpers/auth-guard/auth.guard';
 import { TokenInterceptor } from './_shared/interceptor/token.interceptor';
 import { CreateGroupDialogComponent } from './_helpers/create-group-dialog/create-group-dialog/create-group-dialog.component';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-members-dialog.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     DateTimeFormatPipe,
     NotFoundComponent,
     CreateGroupDialogComponent,
+    AddMembersDialogComponent,
   ],
   imports: [
     BrowserModule,

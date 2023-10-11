@@ -1,0 +1,14 @@
+<div mat-dialog-content>
+    <h2>Add Members</h2>
+    <ul>
+      <div *ngFor="let user of allusers">
+        <mat-checkbox *ngIf="isUserInGroup(user)" [(ngModel)]="user.isSelected">{{ user.name }}</mat-checkbox>
+      </div>
+    </ul>
+  </div>
+  <div mat-dialog-actions>
+      <button mat-button (click)="onClose()">Close</button>
+    <button mat-button (click)="onSubmit()">Add</button>
+  </div>
+  
+  
