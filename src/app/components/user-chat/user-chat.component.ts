@@ -328,6 +328,13 @@ export class UserChatComponent implements AfterViewChecked {
       });
   }
 
+  /**
+   * Opens a dialog to add members to a group, handles the dialog actions, and updates the chat with group members.
+   * - Opens a dialog to select users to add to the group.
+   * - Handles the result from the dialog, sending selected user IDs to the server.
+   * - Updates the chat with group members after adding new members.
+   * - Displays success or error messages to the user using a toaster service.
+   */
   addMembers() {
     // Open the dialog and pass data to it (e.g., groupUsers)
     const dialogRef = this.dialog.open(AddMembersDialogComponent, {
@@ -362,6 +369,13 @@ export class UserChatComponent implements AfterViewChecked {
     );
   }
 
+  /**
+   * Fetches chat data for the current user with group members and updates related properties.
+   * - Retrieves user chat messages.
+   * - Populates the group members and group user names.
+   * - Determines if the current user is an admin in the group.
+   * - Sets the top timestamp for chat messages.
+   */
   private fetchChatwithGroupMembers() {
     this.chatService
       .getUserChat(this.userId, null, null, null)

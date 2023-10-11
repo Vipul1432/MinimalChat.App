@@ -31,6 +31,11 @@ export class AddMembersDialogComponent {
     return !isUserInGroup;
   }
 
+  /**
+   * Handles the submission action in the dialog.
+   * - Collects the selected users from the list.
+   * - Closes the dialog and provides the selected users to the caller.
+   */
   onSubmit() {
     // Collect the selected users
     const selectedUsers = this.allusers.filter((user) => user.isSelected);
@@ -38,6 +43,10 @@ export class AddMembersDialogComponent {
     this.dialogRef.close(selectedUsers);
   }
 
+  /**
+   * Handles the action of closing the dialog without saving.
+   * - Closes the dialog without returning any data.
+   */
   onClose() {
     this.dialogRef.close();
   }
