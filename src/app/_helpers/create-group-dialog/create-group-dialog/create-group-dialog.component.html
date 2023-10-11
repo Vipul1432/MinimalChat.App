@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Create Group</h2>
+<div mat-dialog-content>
+  <mat-form-field>
+    <input matInput placeholder="Group Name" [(ngModel)]="groupName" />
+  </mat-form-field>
+  <div *ngFor="let user of data.users; trackBy: trackByUserId">
+    <mat-checkbox [(ngModel)]="user.selected" color="primary" (change)="onCheckboxChange(user)">
+      {{ user.name }}
+    </mat-checkbox>
+  </div>  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancelClick()">Cancel</button>
+  <button mat-button color="primary" (click)="onCreateGroupClick()">Create Group</button>
+</div>

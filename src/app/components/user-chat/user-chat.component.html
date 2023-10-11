@@ -11,6 +11,11 @@
               <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
+            <div *ngIf="isReceiverIdNull" class="mb-2">
+              <p class="small text-muted">
+                {{ getNamesSeparatedByComma() }}
+              </p>
+            </div>
           </div>
           <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #messageContainerRef>
             <div class="d-flex flex-column justify-content-start">

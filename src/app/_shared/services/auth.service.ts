@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  catchError,
+  tap,
+  throwError,
+} from 'rxjs';
 import { environment } from '../environments/environment';
 import { RegistrationModel } from '../models/RegistrationModel';
 import jwt_decode from 'jwt-decode';
@@ -15,6 +22,11 @@ export class AuthService {
   private currentUserId: string | null = null;
   private isAuthenticatedSubject = new Subject<boolean>();
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  private refreshTokenInProgress = false;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
+  refreshToken$: Observable<any> = this.refreshTokenSubject.asObservable();
 
   constructor(private http: HttpClient) {
     this.checkAuthenticationStatus();
@@ -45,6 +57,7 @@ export class AuthService {
       tap((response: any) => {
         if (response?.data.jwtToken) {
           localStorage.setItem('token', response.data.jwtToken);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
           this.isAuthenticated = true;
           this.userName = this.fetchUserNameFromToken(response.data.jwtToken);
           localStorage.setItem('userName', this.userName!);
@@ -74,6 +87,7 @@ export class AuthService {
 
   setAuthenticationStatus(isAuthenticated: boolean) {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('userName');
     this.isAuthenticatedSubject.next(isAuthenticated);
   }
@@ -117,9 +131,10 @@ export class AuthService {
       .pipe(
         tap((response: any) => {
           if (response?.data) {
-            localStorage.setItem('token', response.data);
+            localStorage.setItem('token', response.data.jwtToken);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
             this.isAuthenticated = true;
-            this.userName = this.fetchUserNameFromToken(response.data);
+            this.userName = this.fetchUserNameFromToken(response.data.jwtToken);
             localStorage.setItem('userName', this.userName!);
             this.checkAuthenticationStatus();
           }
@@ -127,8 +142,30 @@ export class AuthService {
       );
   }
 
+  getRefreshToken(token: string, refreshToken: string): Observable<any> {
+    const url = `${this.apiUrl}refresh-token`;
+    const credentials = {
+      AccessToken: token,
+      RefreshToken: refreshToken,
+    };
+
+    return this.http.post(url, credentials).pipe(
+      tap((response: any) => {
+        if (response?.data.jwtToken) {
+          localStorage.setItem('token', response.data.jwtToken);
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+          this.isAuthenticated = true;
+          this.userName = this.fetchUserNameFromToken(response.data.jwtToken);
+          localStorage.setItem('userName', this.userName!);
+          this.checkAuthenticationStatus();
+        }
+      })
+    );
+  }
+
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('userName');
     this.isAuthenticated = false;
     this.userName = null;

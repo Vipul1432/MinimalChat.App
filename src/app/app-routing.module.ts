@@ -10,7 +10,7 @@ import { UserChatComponent } from './components/user-chat/user-chat.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent, canActivate: [AuthGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'chat', component: ChatDashboardComponent },
   { path: 'chat/user/:userId', component: UserChatComponent },
