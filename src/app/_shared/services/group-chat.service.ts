@@ -48,4 +48,10 @@ export class GroupChatService {
     const params = { memberId: memberId };
     return this.http.post(url, null, { params: params });
   }
+
+  updateGroupName(groupId: string, newName: string): Observable<any> {
+    const url = `${this.apiUrl}${groupId}/edit-group-name`;
+    const params = { newName: newName };
+    return this.http.put(url, null, { params: params });
+  }
 }

@@ -21,6 +21,7 @@ import Swal from 'sweetalert2';
 import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 import { catchError, throwError } from 'rxjs';
 import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
+import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
 
 @Component({
   selector: 'app-user-chat',
@@ -436,5 +437,31 @@ export class UserChatComponent implements AfterViewChecked {
     );
   }
 
-  editGroupName() {}
+  editGroupName() {
+    console.log(this.selectedUserName);
+
+    const dialogRef = this.dialog.open(EditGroupNameDialogComponent, {
+      data: {
+        groupname: this.selectedUserName,
+      },
+    });
+    dialogRef.afterClosed().subscribe(
+      (name) => {
+        this.groupChatService
+          .updateGroupName(this.userId, name)
+          .subscribe((result: any) => {
+            console.log(result);
+
+            this.fetchChatwithGroupMembers();
+          });
+      },
+      (error) => {
+        this.toasterService.error({
+          detail: 'ERROR',
+          summary: 'Error while removing members from the group:' + error,
+          sticky: true,
+        });
+      }
+    );
+  }
 }
