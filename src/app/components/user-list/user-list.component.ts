@@ -42,6 +42,11 @@ export class UserListComponent implements OnInit {
     this.getAllUsers();
   }
 
+  /**
+   * Fetches and populates the list of all users from the backend.
+   * Randomly generates background colors for each user.
+   * @returns void
+   */
   getAllUsers() {
     // Fetch all users
     this.userService.getAllUsers(false).subscribe(
@@ -107,6 +112,12 @@ export class UserListComponent implements OnInit {
   onUserClick(userId: string, name: string): void {
     this.userClicked.emit({ userId, name });
   }
+
+  /**
+   * Opens a dialog for creating a new group, allowing users to select group members and set a group name.
+   * Upon successful creation, the new group is added, and a success message is displayed.
+   * @returns void
+   */
   createGroup() {
     const usersWithoutGroup = this.users.filter((user) => user.email !== null);
     const dialogRef = this.dialog.open(CreateGroupDialogComponent, {

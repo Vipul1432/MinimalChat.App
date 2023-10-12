@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,7 +17,6 @@ import { EditMessageDialogComponent } from './_helpers/edit-message-dialog/edit-
 import { LogListComponent } from './components/log-list/log-list.component';
 import { DateTimeFormatPipe } from './_helpers/date-time-format.pipe';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { AuthInterceptor } from './_shared/interceptor/auth.interceptor';
 import { AuthGuard } from './_helpers/auth-guard/auth.guard';
 import { TokenInterceptor } from './_shared/interceptor/token.interceptor';
 import { CreateGroupDialogComponent } from './_helpers/create-group-dialog/create-group-dialog/create-group-dialog.component';
@@ -26,6 +24,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-members-dialog.component';
 import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
+import { MakeUserAdminDialogComponent } from './_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +43,7 @@ import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/
     AddMembersDialogComponent,
     RemoveUserDialogComponent,
     EditGroupNameDialogComponent,
+    MakeUserAdminDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,11 +57,6 @@ import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: AuthInterceptor,
-    //   multi: true,
-    // },
     AuthGuard,
     { provide: MAT_DIALOG_DATA, useValue: {} },
   ],

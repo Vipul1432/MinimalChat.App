@@ -21,10 +21,11 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #moreOptionsMenu="matMenu">
-                <button mat-menu-item (click)="addMembers()">Add Members</button>
-                <button mat-menu-item (click)="removeMember()">Remove Member</button>
+                <button mat-menu-item (click)="addMembers()"*ngIf="isCurrentUserAdminInGroup">Add Members</button>
+                <button mat-menu-item (click)="removeMember()"*ngIf="isCurrentUserAdminInGroup">Remove Member</button>
                 <button mat-menu-item (click)="editGroupName()">Edit Group Name</button>
-                <button mat-menu-item (click)="deleteGroup()">Delete Group</button>
+                <button mat-menu-item (click)="deleteGroup()"*ngIf="isCurrentUserAdminInGroup">Delete Group</button>
+                <button mat-menu-item (click)="makeMemberAdmin()"*ngIf="isCurrentUserAdminInGroup">Make Admin</button>
               </mat-menu>
             </div>           
           </div>
@@ -32,7 +33,7 @@
             <div class="d-flex flex-column justify-content-start">
               <!-- Messages for current user -->
               <ng-container *ngFor="let message of userChat">
-                <div *ngIf="!isSender(message); else receiverContent" class="d-flex flex-row justify-content-end pt-1">
+                <div *ngIf="isSender(message); else receiverContent" class="d-flex flex-row justify-content-end pt-1">
                   <div>
                     <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
                     (click)="showContextMenu(message)"
@@ -47,7 +48,7 @@
                   <!-- Messages for the selected user -->
                   <div class="d-flex flex-row justify-content-start mb-4">
                     <div class="avatar selected-user-avatar">
-                      <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
+                      <span>{{ getSelectedUserName(message).charAt(0).toUpperCase() }}</span>
                     </div>
                     <div>
                       <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">{{ message.content }}</p>
