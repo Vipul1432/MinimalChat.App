@@ -19,10 +19,10 @@ import { AuthService } from 'src/app/_shared/services/auth.service';
 import { ChatService } from 'src/app/_shared/services/chat.service';
 import Swal from 'sweetalert2';
 import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
-import { catchError, throwError } from 'rxjs';
 import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
+import { MakeUserAdminDialogComponent } from 'src/app/_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
 
 @Component({
   selector: 'app-user-chat',
@@ -38,21 +38,22 @@ export class UserChatComponent implements AfterViewChecked {
   isLoading!: boolean;
   selectedUserName: string = '';
   currentUserName: string | null = '';
+  currentGroupUserName: string | null = '';
   currentUserId: string | null = '';
   messageInput: string = '';
   selectedMessage: UserChat | null = null;
   groupmembers: GroupMembers[] = [];
-  isReceiverIdNull: boolean = true;
+  isReceiverIdNull: boolean = false;
   groupUsers: string[] = [];
   isCurrentUserAdminInGroup: boolean = false;
+  isGroup: boolean = false;
 
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
     private dialog: MatDialog,
     private toasterService: NgToastService,
-    private groupChatService: GroupChatService,
-    private router: Router
+    private groupChatService: GroupChatService
   ) {
     this.currentUserName = this.authService.getUserName();
     this.currentUserId = this.authService.getCurrentUserId();
@@ -73,8 +74,6 @@ export class UserChatComponent implements AfterViewChecked {
         .getUserChat(this.userId, null, null, null)
         .subscribe((messages: any) => {
           this.userChat = messages.data || [];
-          console.log(messages.data);
-
           this.topTimestamp =
             this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
         });
@@ -132,9 +131,9 @@ export class UserChatComponent implements AfterViewChecked {
       document.body.scrollTop ||
       0;
 
-    if (scrollPosition <= 0 || (scrollPosition <= 25 && !this.isLoading)) {
+    if (scrollPosition <= 0 || (scrollPosition <= 100 && !this.isLoading)) {
       this.isLoading = true;
-      this.fetchUserChat(this.topTimestamp);
+      // this.fetchUserChat(this.topTimestamp);
     }
   }
 
@@ -162,6 +161,7 @@ export class UserChatComponent implements AfterViewChecked {
             } else {
               // Append the new messages to the existing ones
               this.userChat = [...messages.data, ...this.userChat];
+              console.log('hi');
             }
           }
 
@@ -185,7 +185,12 @@ export class UserChatComponent implements AfterViewChecked {
    * @returns True if the message is sent by the user, false otherwise.
    */
   isSender(message: UserChat): boolean {
-    return message.senderId === this.userId;
+    if (message.receiverId == null) {
+      this.isReceiverIdNull = true;
+    } else {
+      this.isReceiverIdNull = false;
+    }
+    return message.senderId === this.currentUserId;
   }
 
   /**
@@ -210,6 +215,7 @@ export class UserChatComponent implements AfterViewChecked {
                 this.messageInput = '';
               });
           } else {
+            console.log('error');
           }
         });
     }
@@ -380,31 +386,46 @@ export class UserChatComponent implements AfterViewChecked {
    * - Sets the top timestamp for chat messages.
    */
   private fetchChatwithGroupMembers() {
-    this.chatService
-      .getUserChat(this.userId, null, null, null)
-      .subscribe((messages: any) => {
-        if (
-          messages.message == 'No more conversation found.' &&
-          messages.data != null
-        ) {
-          this.groupmembers = messages.data;
-          this.groupUsers = this.groupmembers.map((member) => member.userName);
+    this.chatService.getUserChat(this.userId, null, null, null).subscribe(
+      (messages: any) => {
+        if (messages) {
+          if (
+            messages.message == 'No more conversation found.' &&
+            messages.data != null
+          ) {
+            this.isGroup = true;
+            this.userChat = [];
+            this.groupmembers = messages.data;
+            this.groupUsers = this.groupmembers.map(
+              (member) => member.userName
+            );
+          } else {
+            this.userChat = messages.data || [];
+            this.isGroup = false;
+          }
+          if (messages.data[0].users != null) {
+            this.groupmembers = messages.data[0].users;
+            this.groupUsers = this.groupmembers.map(
+              (member) => member.userName
+            );
+          }
+          const filteredMembers = this.groupmembers.filter(
+            (member: GroupMembers) => member.userId === this.currentUserId
+          );
+          this.isCurrentUserAdminInGroup = filteredMembers.some(
+            (member) => member.isAdmin
+          );
+          this.topTimestamp =
+            this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
         } else {
-          this.userChat = messages.data || [];
+          console.log('value not getting');
         }
-        if (messages.data[0].users != null) {
-          this.groupmembers = messages.data[0].users;
-          this.groupUsers = this.groupmembers.map((member) => member.userName);
-        }
-        const filteredMembers = this.groupmembers.filter(
-          (member: GroupMembers) => member.userId === this.currentUserId
-        );
-        this.isCurrentUserAdminInGroup = filteredMembers.some(
-          (member) => member.isAdmin
-        );
-        this.topTimestamp =
-          this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
-      });
+      },
+      (error) => {
+        console.log(error);
+        this.isGroup = false;
+      }
+    );
     this.scrollToBottom();
   }
 
@@ -439,6 +460,10 @@ export class UserChatComponent implements AfterViewChecked {
     );
   }
 
+  /**
+   * Opens a dialog to edit the group name and updates it if a new name is provided.
+   * @returns void
+   */
   editGroupName() {
     console.log(this.selectedUserName);
 
@@ -449,13 +474,18 @@ export class UserChatComponent implements AfterViewChecked {
     });
     dialogRef.afterClosed().subscribe(
       (name) => {
-        this.groupChatService
-          .updateGroupName(this.userId, name)
-          .subscribe((result: any) => {
-            console.log(result);
-
-            this.fetchChatwithGroupMembers();
-          });
+        if (name != undefined && name != '')
+          this.groupChatService
+            .updateGroupName(this.userId, name)
+            .subscribe((result: any) => {
+              this.selectedUserName = name;
+              this.fetchChatwithGroupMembers();
+            });
+        this.toasterService.success({
+          detail: 'SUCCESS',
+          summary: `Group name updated successfully!`,
+          duration: 5000,
+        });
       },
       (error) => {
         this.toasterService.error({
@@ -467,6 +497,10 @@ export class UserChatComponent implements AfterViewChecked {
     );
   }
 
+  /**
+   * Initiates a confirmation dialog to delete the group. Performs group deletion if confirmed.
+   * @returns void
+   */
   deleteGroup() {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -496,8 +530,7 @@ export class UserChatComponent implements AfterViewChecked {
           this.groupChatService.deleteGroup(this.userId).subscribe((data) => {
             console.log(data);
           });
-          this.router.navigate(['/chat']);
-          console.log('hi');
+          location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(
             'Cancelled',
@@ -506,5 +539,55 @@ export class UserChatComponent implements AfterViewChecked {
           );
         }
       });
+  }
+
+  /**
+   * Opens a dialog to make a group member an admin within the group.
+   * @returns void
+   */
+  makeMemberAdmin() {
+    const dialogRef = this.dialog.open(MakeUserAdminDialogComponent, {
+      data: {
+        groupUsers: this.groupmembers.filter((member) => !member.isAdmin),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(
+      (user) => {
+        this.groupChatService
+          .makeUserAdmin(this.userId, user.userId)
+          .subscribe((result: any) => {
+            this.fetchChatwithGroupMembers();
+          });
+        this.toasterService.success({
+          detail: 'SUCCESS',
+          summary: `${user.userName} is now Admin`,
+          duration: 5000,
+        });
+      },
+      (error) => {
+        this.toasterService.error({
+          detail: 'ERROR',
+          summary: 'Error while removing members from the group:' + error,
+          sticky: true,
+        });
+      }
+    );
+  }
+
+  /**
+   * Retrieves and returns the username of a selected user based on the message's senderId.
+   * @param messages - UserChat object containing the message details.
+   * @returns The username of the sender if available, or the current selected username.
+   */
+  getSelectedUserName(messages: UserChat): string {
+    if (messages.receiverId == null) {
+      for (const groupmember of this.groupmembers) {
+        if (groupmember.userId === messages.senderId) {
+          return groupmember.userName;
+        }
+      }
+    }
+    return this.selectedUserName;
   }
 }

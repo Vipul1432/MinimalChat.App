@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  Observable,
-  Subject,
-  catchError,
-  tap,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { environment } from '../environments/environment';
 import { RegistrationModel } from '../models/RegistrationModel';
 import jwt_decode from 'jwt-decode';
@@ -22,7 +15,6 @@ export class AuthService {
   private currentUserId: string | null = null;
   private isAuthenticatedSubject = new Subject<boolean>();
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-  private refreshTokenInProgress = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
     null
   );
@@ -142,6 +134,12 @@ export class AuthService {
       );
   }
 
+  /**
+   * Sends a request to refresh an access token using a refresh token and updates the user's authentication status.
+   * @param token - The current access token.
+   * @param refreshToken - The refresh token used to obtain a new access token.
+   * @returns An Observable that represents the result of the token refresh operation.
+   */
   getRefreshToken(token: string, refreshToken: string): Observable<any> {
     const url = `${this.apiUrl}refresh-token`;
     const credentials = {
@@ -163,6 +161,10 @@ export class AuthService {
     );
   }
 
+  /**
+   * Logs the user out by removing authentication-related data from local storage and updating authentication status.
+   * @returns void
+   */
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
