@@ -25,6 +25,7 @@ import { AddMembersDialogComponent } from './_helpers/add-members-dialog/add-mem
 import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
 import { MakeUserAdminDialogComponent } from './_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MakeUserAdminDialogComponent } from './_helpers/make-user-admin-dialog/
     ReactiveFormsModule,
     HttpClientModule,
     FormsModule,
+    NgxExtendedPdfViewerModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },

@@ -12,6 +12,7 @@
     height: 100%;
     margin-top: -12px;
     padding-top: 16px;
+    max-height: 600px;
   }
   
   .user-chat {
