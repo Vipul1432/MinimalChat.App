@@ -108,6 +108,21 @@ export class ChatService {
   }
 
   /**
+   * Uploads a file to a specified recipient or group chat.
+   * @param receiverId - The ID of the recipient or group to which the file is being sent.
+   * @param file - The file to be uploaded.
+   * @returns An Observable that represents the HTTP POST request for file upload.
+   */
+  uploadFile(receiverId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${this.apiUrl}messages/upload/${receiverId}`;
+
+    return this.http.post(url, formData);
+  }
+
+  /**
    * Updates the content of a chat message via a PUT request to the API.
    *
    * @param messageId - The ID of the message to be updated.
@@ -188,5 +203,33 @@ export class ChatService {
     const params = new HttpParams().set('query', query);
 
     return this.http.get<UserChat[]>(url, { params });
+  }
+
+  /**
+   * Downloads a file associated with a specific message by its ID and file name.
+   * @param messageId - The ID of the message containing the file to be downloaded.
+   * @param fileName - The name of the file to be downloaded.
+   */
+  downloadFile(messageId: number, fileName: string): void {
+    this.http
+      .get(`${this.apiUrl}download/${messageId}`, { responseType: 'blob' })
+      .subscribe((response: any) => {
+        this.handleFileDownload(response, fileName);
+      });
+  }
+
+  /**
+   * Handles the download of a file by creating a temporary URL and initiating the download.
+   * @param blob - The Blob object representing the file content.
+   * @param fileName - The name of the file to be downloaded.
+   */
+  private handleFileDownload(blob: Blob, fileName: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 }

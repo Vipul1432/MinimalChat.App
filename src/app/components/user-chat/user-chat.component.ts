@@ -21,7 +21,6 @@ import Swal from 'sweetalert2';
 import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
-import { NavigationExtras, Router } from '@angular/router';
 import { MakeUserAdminDialogComponent } from 'src/app/_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
 
 @Component({
@@ -47,6 +46,9 @@ export class UserChatComponent implements AfterViewChecked {
   groupUsers: string[] = [];
   isCurrentUserAdminInGroup: boolean = false;
   isGroup: boolean = false;
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  externalLinkTarget: string = 'blank';
 
   constructor(
     private chatService: ChatService,
@@ -68,16 +70,20 @@ export class UserChatComponent implements AfterViewChecked {
       this.chatService.startConnection();
     }
 
-    this.chatService.hubConnection.on('ReceiveMessage', (message: string) => {
-      // Handle incoming message, e.g., display it in the chat window
-      this.chatService
-        .getUserChat(this.userId, null, null, null)
-        .subscribe((messages: any) => {
-          this.userChat = messages.data || [];
-          this.topTimestamp =
-            this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
-        });
-    });
+    this.chatService.hubConnection.on(
+      'ReceiveMessage',
+      (id: string, message: string) => {
+        this.chatService
+          .getUserChat(this.userId, null, null, null)
+          .subscribe((messages: any) => {
+            this.userChat = messages.data || [];
+            this.topTimestamp =
+              this.userChat.length > 0
+                ? this.userChat[0].timestamp
+                : new Date();
+          });
+      }
+    );
   }
 
   /**
@@ -97,6 +103,7 @@ export class UserChatComponent implements AfterViewChecked {
    * @param changes - An object containing changes to input properties.
    */
   ngOnChanges(changes: SimpleChanges) {
+    this.scrollToBottom();
     if (changes['userId'] && !changes['userId'].firstChange) {
       if (changes['name'] && !changes['name'].firstChange) {
         this.selectedUserName = this.name;
@@ -198,15 +205,39 @@ export class UserChatComponent implements AfterViewChecked {
    */
   sendMessage() {
     const content = this.messageInput.trim();
+    if (this.selectedFile != null) {
+      this.chatService
+        .uploadFile(this.userId, this.selectedFile)
+        .subscribe((response: any) => {
+          if (response.filePath) {
+            this.chatService
+              .getUserChat(this.userId, null, null, null)
+              .subscribe((messages: any) => {
+                this.userChat = messages.data || [];
+                this.topTimestamp =
+                  this.userChat.length > 0
+                    ? this.userChat[0].timestamp
+                    : new Date();
+                this.selectedFile = null;
+                this.selectedFileName = '';
+              });
+          } else {
+            console.log('error');
+          }
+        });
+    }
+
     if (content.trim() !== '') {
       // Check if the content is not empty or whitespace
       this.chatService
         .sendMessage(this.userId, content)
         .subscribe((response: any) => {
           if (response.statusCode === 200) {
+            console.log('message content' + this.userId);
             this.chatService
               .getUserChat(this.userId, null, null, null)
               .subscribe((messages: any) => {
+                console.log('message content' + content);
                 this.userChat = messages.data || [];
                 this.topTimestamp =
                   this.userChat.length > 0
@@ -292,6 +323,8 @@ export class UserChatComponent implements AfterViewChecked {
    * @param message - The UserChat message to be deleted.
    */
   deleteMessage(message: UserChat) {
+    console.log('hi' + message.id);
+
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -388,6 +421,8 @@ export class UserChatComponent implements AfterViewChecked {
   private fetchChatwithGroupMembers() {
     this.chatService.getUserChat(this.userId, null, null, null).subscribe(
       (messages: any) => {
+        console.log(messages);
+
         if (messages) {
           if (
             messages.message == 'No more conversation found.' &&
@@ -400,6 +435,8 @@ export class UserChatComponent implements AfterViewChecked {
               (member) => member.userName
             );
           } else {
+            console.log('test1' + messages.data);
+
             this.userChat = messages.data || [];
             this.isGroup = false;
           }
@@ -589,5 +626,49 @@ export class UserChatComponent implements AfterViewChecked {
       }
     }
     return this.selectedUserName;
+  }
+
+  /**
+   * Creates an input element for selecting a file and updates component properties with the selected file's information.
+   */
+  attachFile() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '*/*';
+
+    fileInput.addEventListener('change', (event) => {
+      const inputElement = event.target as HTMLInputElement;
+      const selectedFile = inputElement.files?.[0];
+      if (selectedFile) {
+        this.selectedFile = selectedFile;
+        this.selectedFileName = selectedFile.name;
+      }
+    });
+
+    fileInput.click();
+  }
+
+  /**
+   * Checks if a given file name has an image extension.
+   * @param fileName - The name of the file to check.
+   * @returns True if the file is an image, otherwise false.
+   */
+  isImageFile(fileName: string): boolean {
+    const extensions = ['.jpg', '.jpeg', '.png'];
+    const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+    return extensions.includes(ext);
+  }
+
+  /**
+   * Initiates the download of a file associated with a chat message and displays a success notification.
+   * @param message - The chat message containing file details.
+   */
+  downloadFile(message: UserChat) {
+    this.chatService.downloadFile(message.id, message.fileName);
+    this.toasterService.success({
+      detail: 'SUCCESS',
+      summary: 'File downloaded successfully',
+      duration: 3000,
+    });
   }
 }
