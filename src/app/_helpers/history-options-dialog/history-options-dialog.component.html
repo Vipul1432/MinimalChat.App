@@ -1,0 +1,17 @@
+<div class="container">
+  <h2>Include History?</h2>
+  <mat-radio-group [(ngModel)]="selectedOption">
+    <mat-radio-button [value]="'showAll'">Show all history</mat-radio-button
+    ><br />
+    <mat-radio-button [value]="'showDays'"
+      >Show history for the last
+      <input matInput type="number" [(ngModel)]="days" /> days</mat-radio-button
+    ><br />
+    <mat-radio-button [value]="'no'">No</mat-radio-button>
+  </mat-radio-group>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onSelect(selectedOption, days)">Select</button>
+    <button mat-button (click)="onClose()">Cancel</button>
+  </div>
+</div>

@@ -1,5 +1,4 @@
-
-<section style="background-color: #eee;">
+<section style="background-color: #eee">
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col-md-10 col-lg-8 col-xl-6">
@@ -11,46 +10,118 @@
               <span>{{ selectedUserName.charAt(0).toUpperCase() }}</span>
             </div>
             <h3 class="mb-0 ms-3">{{ selectedUserName }}</h3>
-            <div *ngIf="isReceiverIdNull" class="sticky-header-content">
+            <div
+              *ngIf="isReceiverIdNull || isGroup"
+              class="sticky-header-content"
+            >
               <span *ngFor="let member of groupmembers">
-                <p class="small text-muted group-users" [ngClass]="{'admin': member.isAdmin}" [ngStyle]="{'color': member.isAdmin ? 'green' : 'white'}">
+                <p
+                  class="small text-muted group-users"
+                  [ngClass]="{ admin: member.isAdmin }"
+                  [ngStyle]="{ color: member.isAdmin ? 'green' : 'white' }"
+                >
                   <small>&nbsp;{{ member.userName }}</small>
-                </p>            
+                </p>
               </span>
               <button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu">
                 <mat-icon>more_vert</mat-icon>
               </button>
               <mat-menu #moreOptionsMenu="matMenu">
-                <button mat-menu-item (click)="addMembers()"*ngIf="isCurrentUserAdminInGroup">Add Members</button>
-                <button mat-menu-item (click)="removeMember()"*ngIf="isCurrentUserAdminInGroup">Remove Member</button>
-                <button mat-menu-item (click)="editGroupName()">Edit Group Name</button>
-                <button mat-menu-item (click)="deleteGroup()"*ngIf="isCurrentUserAdminInGroup">Delete Group</button>
-                <button mat-menu-item (click)="makeMemberAdmin()"*ngIf="isCurrentUserAdminInGroup">Make Admin</button>
+                <button
+                  mat-menu-item
+                  (click)="addMembers()"
+                  *ngIf="isCurrentUserAdminInGroup"
+                >
+                  Add Members
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="removeMember()"
+                  *ngIf="isCurrentUserAdminInGroup"
+                >
+                  Remove Member
+                </button>
+                <button mat-menu-item (click)="editGroupName()">
+                  Edit Group Name
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="deleteGroup()"
+                  *ngIf="isCurrentUserAdminInGroup"
+                >
+                  Delete Group
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="makeMemberAdmin()"
+                  *ngIf="isCurrentUserAdminInGroup"
+                >
+                  Make Admin
+                </button>
               </mat-menu>
-            </div>           
+            </div>
           </div>
-          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px" #messageContainerRef>
+          <div
+            class="card-body"
+            data-mdb-perfect-scrollbar="true"
+            style="position: relative; height: 400px"
+            #messageContainerRef
+          >
             <div class="d-flex flex-column justify-content-start">
               <!-- Messages for current user -->
               <ng-container *ngFor="let message of userChat">
-                <div *ngIf="isSender(message); else receiverContent" class="d-flex flex-row justify-content-end pt-1">
+                <div
+                  *ngIf="isSender(message); else receiverContent"
+                  class="d-flex flex-row justify-content-end pt-1"
+                >
                   <div>
                     <ng-container *ngIf="message.content === null" class="mb-2">
-                      <a [href]="" [matMenuTriggerFor]="messageContextMenuForFile" (click)="showContextMenu(message)" target="_blank" class="small p-2 me-3 text-white rounded-3 bg-primary d-flex align-items-center" style="text-decoration: none;">
-                        <ng-container *ngIf="isImageFile(message.fileName); else notImage">
-                          <img [src]="'/assets/uploadedFiles/'+ message.filePath" alt="Image Preview" style="max-width: 200px; max-height: 200px;" class="d-block">
+                      <a
+                        [href]=""
+                        [matMenuTriggerFor]="messageContextMenuForFile"
+                        (click)="showContextMenu(message)"
+                        target="_blank"
+                        class="small p-2 me-3 text-white rounded-3 bg-primary d-flex align-items-center"
+                        style="text-decoration: none"
+                      >
+                        <ng-container
+                          *ngIf="isImageFile(message.fileName); else notImage"
+                        >
+                          <img
+                            [src]="'/assets/uploadedFiles/' + message.filePath"
+                            alt="Image Preview"
+                            style="max-width: 200px; max-height: 200px"
+                            class="d-block"
+                          />
                         </ng-container>
                         <ng-template #notImage>
-                          <img src="../../../assets/file.png" width="25px" height="20px" alt="image" />
+                          <img
+                            src="../../../assets/file.png"
+                            width="25px"
+                            height="20px"
+                            alt="image"
+                          />
                           <span class="ms-2">{{ message.fileName }}</span>
-                          <i class="fa-regular fa-circle-down fs-4 mt-2 ms-2 pb-2" (click)="downloadFile(message)"></i>
+                          <i
+                            class="fa-regular fa-circle-down fs-4 mt-2 ms-2 pb-2"
+                            (click)="downloadFile(message)"
+                          ></i>
                         </ng-template>
                       </a>
                     </ng-container>
-                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
-                    (click)="showContextMenu(message)"
-                    [matMenuTriggerFor]="messageContextMenu" *ngIf="message.content">{{ message.content }}</p>
-                    <p class="small me-3 mb-3 rounded-3 text-muted mt-1 d-flex justify-content-end">{{ message.timestamp | date:'h:mm a' }}</p>
+                    <p
+                      class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
+                      (click)="showContextMenu(message)"
+                      [matMenuTriggerFor]="messageContextMenu"
+                      *ngIf="message.content"
+                    >
+                      {{ message.content }}
+                    </p>
+                    <p
+                      class="small me-3 mb-3 rounded-3 text-muted mt-1 d-flex justify-content-end"
+                    >
+                      {{ message.timestamp | date : "h:mm a" }}
+                    </p>
                   </div>
                   <div class="avatar current-user-avatar">
                     <span>{{ currentUserName!.charAt(0).toUpperCase() }}</span>
@@ -60,25 +131,65 @@
                   <!-- Messages for the selected user -->
                   <div class="d-flex flex-row justify-content-start mb-4">
                     <div class="avatar selected-user-avatar">
-                      <span>{{ getSelectedUserName(message).charAt(0).toUpperCase() }}</span>
+                      <span>{{
+                        getSelectedUserName(message).charAt(0).toUpperCase()
+                      }}</span>
                     </div>
                     <div>
-                      <ng-container *ngIf="message.content === null" class="py-2">
-                        <a [href]="'/assets/uploadedFiles/'+ message.filePath" target="_blank" class="small py-3 my-1 pe-2 ms-3 rounded-3 receiver-message message" style="background-color: #f5f6f7;" style="text-decoration: none;">
-                          <ng-container *ngIf="isImageFile(message.fileName); else notImage">
-                            <img [src]="'/assets/uploadedFiles/'+ message.filePath" alt="Image Preview" style="max-width: 200px; max-height: 200px;">
-                            <br>
-                            <span class="fa-regular fa-circle-down fs-5 mt-2 dwnld" (click)="downloadFile(message)"></span>
+                      <ng-container
+                        *ngIf="message.content === null"
+                        class="py-2"
+                      >
+                        <a
+                          [href]="'/assets/uploadedFiles/' + message.filePath"
+                          target="_blank"
+                          class="small py-3 my-1 pe-2 ms-3 rounded-3 receiver-message message"
+                          style="background-color: #f5f6f7"
+                          style="text-decoration: none"
+                        >
+                          <ng-container
+                            *ngIf="isImageFile(message.fileName); else notImage"
+                          >
+                            <img
+                              [src]="
+                                '/assets/uploadedFiles/' + message.filePath
+                              "
+                              alt="Image Preview"
+                              style="max-width: 200px; max-height: 200px"
+                            />
+                            <br />
+                            <span
+                              class="fa-regular fa-circle-down fs-5 mt-2 dwnld"
+                              (click)="downloadFile(message)"
+                            ></span>
                           </ng-container>
                           <ng-template #notImage>
-                            <img src="../../../assets/file.png" class="ms-2" width="25px" height="20px" alt="image" />
-                            <span class="ms-2">{{ message.fileName }}</span> &nbsp;&nbsp;
-                            <span class="fa-regular fa-circle-down fs-5 mt-2 dwnld" (click)="downloadFile(message)"></span>
+                            <img
+                              src="../../../assets/file.png"
+                              class="ms-2"
+                              width="25px"
+                              height="20px"
+                              alt="image"
+                            />
+                            <span class="ms-2">{{ message.fileName }}</span>
+                            &nbsp;&nbsp;
+                            <span
+                              class="fa-regular fa-circle-down fs-5 mt-2 dwnld"
+                              (click)="downloadFile(message)"
+                            ></span>
                           </ng-template>
                         </a>
                       </ng-container>
-                      <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;" *ngIf="message.content">{{ message.content }}</p>
-                      <p class="small ms-3 mb-3 rounded-3 mt-3 text-muted">{{ message.timestamp | date:'h:mm a' }}</p>
+                      <p
+                        class="small p-2 ms-3 mb-1 rounded-3"
+                        style="background-color: #f5f6f7"
+                        *ngIf="message.content"
+                      >
+                        {{ message.content }}
+                      </p>
+                      <p class="small ms-3 mb-3 rounded-3 mt-3 text-muted">
+                        {{ message.timestamp | date : "h:mm a" }}
+                      </p>
                     </div>
                   </div>
                 </ng-template>
@@ -86,9 +197,18 @@
             </div>
           </div>
           <!-- Use *ngIf to conditionally render the card footer -->
-          <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3" *ngIf="selectedUserName">
-            <input type="text" class="form-control form-control-md" [ngModel]="selectedFileName"
-            id="exampleFormControlInput1" placeholder="Type message" [(ngModel)]="messageInput">
+          <div
+            class="card-footer text-muted d-flex justify-content-start align-items-center p-3"
+            *ngIf="selectedUserName"
+          >
+            <input
+              type="text"
+              class="form-control form-control-md"
+              [ngModel]="selectedFileName"
+              id="exampleFormControlInput1"
+              placeholder="Type message"
+              [(ngModel)]="messageInput"
+            />
             <span class="file-attachment">
               <a class="ms-2" href="javascript:void(0);" (click)="attachFile()">
                 <i class="fas fa-paperclip"></i>
@@ -96,7 +216,11 @@
             </span>
             <span class="send">
               <!-- Add click event handler to call sendMessage method -->
-              <a class="ms-2" href="javascript:void(0);" (click)="sendMessage()">
+              <a
+                class="ms-2"
+                href="javascript:void(0);"
+                (click)="sendMessage()"
+              >
                 <i class="fas fa-paper-plane"></i>
               </a>
             </span>
@@ -107,13 +231,16 @@
   </div>
 </section>
 
-
 <!-- Context Menu -->
 <mat-menu #messageContextMenu="matMenu">
   <button mat-menu-item (click)="editMessage(selectedMessage!)">Edit</button>
-  <button mat-menu-item (click)="deleteMessage(selectedMessage!)">Delete</button>
+  <button mat-menu-item (click)="deleteMessage(selectedMessage!)">
+    Delete
+  </button>
 </mat-menu>
 
 <mat-menu #messageContextMenuForFile="matMenu">
-  <button mat-menu-item (click)="deleteMessage(selectedMessage!)">Delete</button>
+  <button mat-menu-item (click)="deleteMessage(selectedMessage!)">
+    Delete
+  </button>
 </mat-menu>
