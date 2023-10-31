@@ -22,6 +22,8 @@ import { GroupChatService } from 'src/app/_shared/services/group-chat.service';
 import { RemoveUserDialogComponent } from 'src/app/_helpers/remove-user-dialog/remove-user-dialog.component';
 import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
 import { MakeUserAdminDialogComponent } from 'src/app/_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
+import { HistoryOption } from '../../_helpers/enum/historyOption';
+import { AddGroupMember } from '../../_shared/models/AddGroupMember';
 
 @Component({
   selector: 'app-user-chat',
@@ -49,6 +51,7 @@ export class UserChatComponent implements AfterViewChecked {
   selectedFile: File | null = null;
   selectedFileName: string | null = null;
   externalLinkTarget: string = 'blank';
+  selectedOption: number = 0;
 
   constructor(
     private chatService: ChatService,
@@ -388,10 +391,23 @@ export class UserChatComponent implements AfterViewChecked {
 
     // Handle dialog actions as needed
     dialogRef.afterClosed().subscribe(
-      (result: User[]) => {
-        const userIds: string[] = result.map((user) => user.id);
+      (data) => {
+        if (data.historyOption.selectedOption === 'showAll') {
+          this.selectedOption = 0;
+        } else if (data.historyOption.selectedOption === 'no') {
+          this.selectedOption = 2;
+        } else {
+          this.selectedOption = 1;
+        }
+        const addGroupMember: AddGroupMember = {
+          memberId: data.addUser.id,
+          HistoryOption: this.selectedOption,
+          Days: data.historyOption.days,
+        };
+        console.log('add' + addGroupMember.memberId);
+
         this.groupChatService
-          .addMembersToGroup(this.userId, userIds)
+          .addMembersToGroup(this.userId, addGroupMember)
           .subscribe((response) => {
             this.fetchChatwithGroupMembers();
             this.toasterService.success({
@@ -435,8 +451,6 @@ export class UserChatComponent implements AfterViewChecked {
               (member) => member.userName
             );
           } else {
-            console.log('test1' + messages.data);
-
             this.userChat = messages.data || [];
             this.isGroup = false;
           }

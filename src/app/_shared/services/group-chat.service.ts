@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AddGroupMember } from '../models/AddGroupMember';
 
 @Injectable({
   providedIn: 'root',
@@ -33,9 +34,12 @@ export class GroupChatService {
    * - Provides the group ID and member IDs in the request.
    * - Returns an observable with the API response.
    */
-  addMembersToGroup(groupId: string, memberIds: string[]): Observable<any> {
+  addMembersToGroup(
+    groupId: string,
+    addGroupMemberDto: AddGroupMember
+  ): Observable<any> {
     const url = `${this.apiUrl}${groupId}/add-member`;
-    return this.http.post(url, memberIds);
+    return this.http.post(url, addGroupMemberDto);
   }
 
   /**

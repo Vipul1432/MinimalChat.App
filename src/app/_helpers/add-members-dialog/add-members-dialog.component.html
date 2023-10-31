@@ -1,14 +1,24 @@
 <div mat-dialog-content>
-    <h2>Add Members</h2>
-    <ul>
-      <div *ngFor="let user of allusers">
-        <mat-checkbox *ngIf="isUserInGroup(user)" [(ngModel)]="user.isSelected">{{ user.name }}</mat-checkbox>
+  <h2>Add Members</h2>
+  <ul>
+    <div *ngFor="let user of allusers">
+      <div (click)="openHistoryOptionsDialog(user)" *ngIf="isUserInGroup(user)">
+        <mat-icon
+          class="p-1 mt-1 custom"
+          style="cursor: pointer"
+          (click)="user.isSelected = !user.isSelected"
+          [ngClass]="{ 'text-primary': user.isSelected }"
+          >add</mat-icon
+        >
+        &nbsp;
+        <span [ngClass]="{ 'text-primary': user.isSelected }">{{
+          user.name
+        }}</span>
       </div>
-    </ul>
-  </div>
-  <div mat-dialog-actions>
-      <button mat-button (click)="onClose()">Close</button>
-    <button mat-button (click)="onSubmit()">Add</button>
-  </div>
-  
-  
+    </div>
+  </ul>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+  <button mat-button (click)="onSubmit()">Add</button>
+</div>
