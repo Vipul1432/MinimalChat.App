@@ -18,7 +18,7 @@ export class ChatService {
       this.hubConnection.state === signalR.HubConnectionState.Disconnected
     ) {
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:7038/chatHub')
+        .withUrl(environment.chatHubUrl)
         .withAutomaticReconnect()
         .build();
       this.startSignalRConnection();

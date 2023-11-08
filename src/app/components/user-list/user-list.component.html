@@ -1,14 +1,16 @@
-<section style="background-color: #eee;">
+<section class="bgcolor">
   <div class="container">
     <div class="card">
-      <div class="card-body" style="background-color: #f5f5f5; border-radius: 8px;">
+      <div class="card-body bg-light rounded">
         <button class="btn btn-primary mb-3" (click)="createGroup()">
-          <i class="fas fa-plus"></i> Create Group <mat-icon class="pt-1">group_add</mat-icon>
+          <i class="fas fa-plus"></i> Create Group
+          <mat-icon class="pt-1">group_add</mat-icon>
         </button>
         <ul class="list-unstyled mb-0">
           <!-- Use *ngFor to generate dynamic user list items -->
-          <li class="p-2 border-bottom" style="background-color: #eee;" *ngFor="let user of users; let i = index" (click)="onUserClick(user.id, user.name)">
-            <a class="d-flex justify-content-between" style="text-decoration: none; color: inherit;">
+          <li class="p-2 border-bottom bgcolor" *ngFor="let user of users; let i = index"
+            (click)="onUserClick(user.id, user.name)">
+            <a class="d-flex justify-content-between text-decoration-none text-dark">
               <div class="d-flex flex-row">
                 <div class="circle-box" [style.backgroundColor]="userBackgroundColors[i]">
                   {{ user.name.charAt(0) | uppercase }}

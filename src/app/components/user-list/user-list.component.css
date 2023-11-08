@@ -24,3 +24,6 @@
   .container{
     height: 400px !important;
   }
+  .bgcolor {
+    background-color: #eee;
+  }

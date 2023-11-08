@@ -68,7 +68,6 @@ export class UserListComponent implements OnInit {
         }
       },
       (error) => {
-        console.error('Failed to fetch users:', error);
         this.toasterService.error({
           detail: 'ERROR',
           summary: 'Failed to fetch users',
@@ -133,7 +132,6 @@ export class UserListComponent implements OnInit {
         const { groupName, selectedUsers } = result;
         this.groupChatService.createGroup(groupName, selectedUsers).subscribe(
           (response) => {
-            console.log(response);
             this.getAllUsers();
             this.toasterService.success({
               detail: 'SUCCESS',
@@ -142,8 +140,6 @@ export class UserListComponent implements OnInit {
             });
           },
           (error) => {
-            // Handle an error response from the service (e.g., display an error message)
-            console.error('Error creating group:', error);
             this.toasterService.error({
               detail: 'ERROR',
               summary: 'Failed to create group',
