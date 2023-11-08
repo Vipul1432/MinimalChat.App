@@ -171,7 +171,6 @@ export class UserChatComponent implements AfterViewChecked {
             } else {
               // Append the new messages to the existing ones
               this.userChat = [...messages.data, ...this.userChat];
-              console.log('hi');
             }
           }
 
@@ -182,7 +181,11 @@ export class UserChatComponent implements AfterViewChecked {
         },
         (error: any) => {
           if (error.status === 400) {
-            console.log(`error message` + error.error.message);
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: error.error.message,
+              sticky: true,
+            });
           }
         }
       );
@@ -225,7 +228,11 @@ export class UserChatComponent implements AfterViewChecked {
                 this.selectedFileName = '';
               });
           } else {
-            console.log('error');
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: 'Error occurs in Sending File! Try again.',
+              sticky: true,
+            });
           }
         });
     }
@@ -236,11 +243,9 @@ export class UserChatComponent implements AfterViewChecked {
         .sendMessage(this.userId, content)
         .subscribe((response: any) => {
           if (response.statusCode === 200) {
-            console.log('message content' + this.userId);
             this.chatService
               .getUserChat(this.userId, null, null, null)
               .subscribe((messages: any) => {
-                console.log('message content' + content);
                 this.userChat = messages.data || [];
                 this.topTimestamp =
                   this.userChat.length > 0
@@ -249,7 +254,11 @@ export class UserChatComponent implements AfterViewChecked {
                 this.messageInput = '';
               });
           } else {
-            console.log('error');
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: 'Error occurs in Sending message! Try again.',
+              sticky: true,
+            });
           }
         });
     }
@@ -316,7 +325,13 @@ export class UserChatComponent implements AfterViewChecked {
               });
           }
         },
-        (error) => {}
+        (error) => {
+          this.toasterService.error({
+            detail: 'Error',
+            summary: error.message,
+            duration: 5000,
+          });
+        }
       );
   }
 
@@ -326,8 +341,6 @@ export class UserChatComponent implements AfterViewChecked {
    * @param message - The UserChat message to be deleted.
    */
   deleteMessage(message: UserChat) {
-    console.log('hi' + message.id);
-
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
@@ -404,7 +417,6 @@ export class UserChatComponent implements AfterViewChecked {
           HistoryOption: this.selectedOption,
           Days: data.historyOption.days,
         };
-        console.log('add' + addGroupMember.memberId);
 
         this.groupChatService
           .addMembersToGroup(this.userId, addGroupMember)
@@ -437,8 +449,6 @@ export class UserChatComponent implements AfterViewChecked {
   private fetchChatwithGroupMembers() {
     this.chatService.getUserChat(this.userId, null, null, null).subscribe(
       (messages: any) => {
-        console.log(messages);
-
         if (messages) {
           if (
             messages.message == 'No more conversation found.' &&
@@ -468,12 +478,9 @@ export class UserChatComponent implements AfterViewChecked {
           );
           this.topTimestamp =
             this.userChat.length > 0 ? this.userChat[0].timestamp : new Date();
-        } else {
-          console.log('value not getting');
         }
       },
       (error) => {
-        console.log(error);
         this.isGroup = false;
       }
     );
@@ -516,8 +523,6 @@ export class UserChatComponent implements AfterViewChecked {
    * @returns void
    */
   editGroupName() {
-    console.log(this.selectedUserName);
-
     const dialogRef = this.dialog.open(EditGroupNameDialogComponent, {
       data: {
         groupname: this.selectedUserName,
@@ -578,9 +583,9 @@ export class UserChatComponent implements AfterViewChecked {
             `${this.selectedUserName} has been deleted.`,
             'success'
           );
-          this.groupChatService.deleteGroup(this.userId).subscribe((data) => {
-            console.log(data);
-          });
+          this.groupChatService
+            .deleteGroup(this.userId)
+            .subscribe((data) => {});
           location.reload();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire(

@@ -6,7 +6,10 @@ import { passwordMatchValidator } from 'src/app/_helpers/validators/password-mat
 import { RegistrationModel } from 'src/app/_shared/models/RegistrationModel';
 import { AuthService } from 'src/app/_shared/services/auth.service';
 import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
-import { environment } from '../../_shared/environments/environment';
+import {
+  PASSWORD_REGEX,
+  environment,
+} from '../../_shared/environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -38,15 +41,7 @@ export class RegisterComponent {
           ],
         ],
         email: ['', [Validators.required, Validators.email]],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern(
-              /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/
-            ),
-          ],
-        ],
+        password: ['', [Validators.required, PASSWORD_REGEX]],
         confirmpassword: ['', [Validators.required]],
       },
       {
@@ -123,7 +118,6 @@ export class RegisterComponent {
       this.authService.registerUser(user).subscribe(
         (response: any) => {
           this.registrationResult = response;
-          console.log(response);
 
           if (response.statusCode === 200) {
             this.toasterService.success({
@@ -147,7 +141,6 @@ export class RegisterComponent {
           }
         },
         (error) => {
-          console.error('Registration failed:', error);
           this.toasterService.error({
             detail: 'ERROR',
             summary: 'Registration failed',

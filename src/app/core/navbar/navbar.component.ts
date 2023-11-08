@@ -36,7 +36,6 @@ export class NavbarComponent {
     // If the user is authenticated, get their name
     if (this.userName == null || this.userName == '') {
       this.userName = await localStorage.getItem('userName');
-      console.log(this.userName);
       if (this.userName != null) {
         this.isAuthenticated = true;
       } else {

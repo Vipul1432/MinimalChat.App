@@ -102,6 +102,31 @@
   border-radius: 4px;
 }
 
+.bgcolor {
+  background-color: #eee;
+}
+
+a{
+  text-decoration: none !important;
+}
+
+.custom-height{
+  height: 400px;
+}
+
+.custom-size {
+  max-width: 200px; 
+  max-height: 200px
+}
+
+.cursor {
+  cursor: pointer !important;
+}
+
+.bgcolor-2{
+  background-color: #f5f6f7
+}
+
 .send-button {
   background-color: #007bff;
   color: #fff;

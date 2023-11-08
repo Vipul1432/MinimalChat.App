@@ -185,9 +185,7 @@ export class AuthService {
       const decodedToken: any = jwt_decode(token);
 
       const username: string | undefined =
-        decodedToken[
-          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
-        ];
+        decodedToken[environment.identityClaimName];
 
       // Return the username if found
       if (username) {
@@ -197,7 +195,6 @@ export class AuthService {
         return null;
       }
     } catch (error) {
-      console.error('Error decoding token:', error);
       return null;
     }
   }
@@ -214,9 +211,7 @@ export class AuthService {
       const decodedToken: any = jwt_decode(token);
 
       const userId: string | undefined =
-        decodedToken[
-          'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-        ];
+        decodedToken[environment.identityClaimNameIdentifier];
 
       // Return the username if found
       if (userId) {
@@ -226,7 +221,6 @@ export class AuthService {
         return null;
       }
     } catch (error) {
-      console.error('Error decoding token:', error);
       return null;
     }
   }

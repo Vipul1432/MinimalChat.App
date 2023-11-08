@@ -61,10 +61,10 @@ export class AddMembersDialogComponent {
    * - Closes the dialog and provides the selected users to the caller.
    */
   onSubmit() {
-    // this.dialogRef.close({
-    //   addUser: this.selectedUser,
-    //   historyOption: this.selectedOption,
-    // });
+    this.dialogRef.close({
+      addUser: this.selectedUser,
+      historyOption: this.selectedOption,
+    });
   }
 
   /**
