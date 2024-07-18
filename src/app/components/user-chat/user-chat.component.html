@@ -118,18 +118,16 @@
           <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3"
             *ngIf="selectedUserName">
             <input type="text" class="form-control form-control-md" [ngModel]="selectedFileName"
-              id="exampleFormControlInput1" placeholder="Type message" [(ngModel)]="messageInput" />
-            <span class="file-attachment">
-              <a class="ms-2" href="javascript:void(0);" (click)="attachFile()">
-                <i class="fas fa-paperclip"></i>
-              </a>
-            </span>
-            <span class="send">
-              <!-- Add click event handler to call sendMessage method -->
-              <a class="ms-2" href="javascript:void(0);" (click)="sendMessage()">
-                <i class="fas fa-paper-plane"></i>
-              </a>
-            </span>
+              id="exampleFormControlInput1" placeholder="Type message" [(ngModel)]="messageInput" (keyup.enter)="sendMessage()"/>
+              <button mat-icon-button (click)="toggleEmojiPicker()">
+                <mat-icon>insert_emoticon</mat-icon>
+              </button>
+              <button mat-icon-button (click)="attachFile()">
+                <mat-icon>attach_file</mat-icon>
+              </button>
+              <button mat-icon-button (click)="sendMessage()">
+                <mat-icon>send</mat-icon>
+              </button>
           </div>
         </div>
       </div>
@@ -150,3 +148,6 @@
     Delete
   </button>
 </mat-menu>
+
+<!-- Emoji Picker -->
+<emoji-mart *ngIf="showEmojiPicker" (emojiSelect)="addEmoji($event)" [style]="{ position: 'absolute', bottom: '-40px', right: '30px' }"></emoji-mart>
