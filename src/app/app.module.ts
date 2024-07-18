@@ -26,6 +26,7 @@ import { RemoveUserDialogComponent } from './_helpers/remove-user-dialog/remove-
 import { EditGroupNameDialogComponent } from './_helpers/edit-group-name-dialog/edit-group-name-dialog.component';
 import { MakeUserAdminDialogComponent } from './_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { HistoryOptionsDialogComponent } from './_helpers/history-options-dialog/history-options-dialog.component';
 
 @NgModule({
@@ -58,6 +59,7 @@ import { HistoryOptionsDialogComponent } from './_helpers/history-options-dialog
     HttpClientModule,
     FormsModule,
     NgxExtendedPdfViewerModule,
+    PickerComponent
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },

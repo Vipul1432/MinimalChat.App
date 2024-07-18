@@ -24,6 +24,7 @@ import { EditGroupNameDialogComponent } from 'src/app/_helpers/edit-group-name-d
 import { MakeUserAdminDialogComponent } from 'src/app/_helpers/make-user-admin-dialog/make-user-admin-dialog.component';
 import { HistoryOption } from '../../_helpers/enum/historyOption';
 import { AddGroupMember } from '../../_shared/models/AddGroupMember';
+import { EmojiEvent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-user-chat',
@@ -52,6 +53,7 @@ export class UserChatComponent implements AfterViewChecked {
   selectedFileName: string | null = null;
   externalLinkTarget: string = 'blank';
   selectedOption: number = 0;
+  showEmojiPicker: boolean = false;
 
   constructor(
     private chatService: ChatService,
@@ -211,6 +213,7 @@ export class UserChatComponent implements AfterViewChecked {
    */
   sendMessage() {
     const content = this.messageInput.trim();
+    this.toggleEmojiPicker();
     if (this.selectedFile != null) {
       this.chatService
         .uploadFile(this.userId, this.selectedFile)
@@ -452,9 +455,10 @@ export class UserChatComponent implements AfterViewChecked {
         if (messages) {
           if (
             messages.message == 'No more conversation found.' &&
-            messages.data != null
+            messages.data != null && messages.data.length > 0
           ) {
             this.isGroup = true;
+            console.log("isgrouptrue")
             this.userChat = [];
             this.groupmembers = messages.data;
             this.groupUsers = this.groupmembers.map(
@@ -462,9 +466,10 @@ export class UserChatComponent implements AfterViewChecked {
             );
           } else {
             this.userChat = messages.data || [];
+            console.log("isgroupFalse")
             this.isGroup = false;
           }
-          if (messages.data[0].users != null) {
+          if (messages.data[0]?.users != null) {
             this.groupmembers = messages.data[0].users;
             this.groupUsers = this.groupmembers.map(
               (member) => member.userName
@@ -689,5 +694,15 @@ export class UserChatComponent implements AfterViewChecked {
       summary: 'File downloaded successfully',
       duration: 3000,
     });
+  }
+
+  toggleEmojiPicker() {
+    console.log(this.showEmojiPicker)
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+  addEmoji(event: EmojiEvent) {
+    const emoji = event.emoji.native;
+    console.log(emoji);
+    this.messageInput = this.messageInput + emoji;
   }
 }
