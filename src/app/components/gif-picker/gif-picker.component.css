@@ -1,0 +1,28 @@
+.gif-picker-container {
+    top: 20px;
+    right: 30%;
+    width: 300px;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2px;
+  }
+  
+  .gif-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .gif-grid div {
+    flex: 1 1 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+    box-sizing: border-box;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .gif-grid img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }

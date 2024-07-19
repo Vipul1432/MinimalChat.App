@@ -97,11 +97,12 @@ export class ChatService {
    * @returns An Observable representing the result of the message sending process.
    *          Subscribers can handle the response asynchronously.
    */
-  sendMessage(receiverId: string, content: string): Observable<any> {
+  sendMessage(receiverId: string, content: string, gifUrls: string | null) : Observable<any> {
     const url = `${this.apiUrl}messages`;
     const body = {
       receiverId: receiverId,
       content: content,
+      gifUrls : gifUrls
     };
 
     return this.http.post(url, body);

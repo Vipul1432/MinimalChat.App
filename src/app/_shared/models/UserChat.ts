@@ -6,6 +6,7 @@ export interface UserChat {
   filePath: string;
   fileName: string;
   timestamp: Date;
+  gifUrls: string;
   editedContent?: string;
   isEditing?: boolean;
 }
