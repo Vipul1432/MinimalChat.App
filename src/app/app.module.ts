@@ -28,6 +28,7 @@ import { MakeUserAdminDialogComponent } from './_helpers/make-user-admin-dialog/
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { HistoryOptionsDialogComponent } from './_helpers/history-options-dialog/history-options-dialog.component';
+import { GifPickerComponent } from './components/gif-picker/gif-picker.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { HistoryOptionsDialogComponent } from './_helpers/history-options-dialog
     EditGroupNameDialogComponent,
     MakeUserAdminDialogComponent,
     HistoryOptionsDialogComponent,
+    GifPickerComponent,
   ],
   imports: [
     BrowserModule,

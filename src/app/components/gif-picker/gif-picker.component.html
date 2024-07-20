@@ -1,0 +1,11 @@
+<div>
+    <input class="form-control" [(ngModel)]="query" placeholder="Search for GIFs" (keyup.enter)="searchGifs()">
+</div>
+
+<div class="gif-picker-container">
+    <div class="gif-grid" fxLayout="row wrap" fxLayoutGap="10px">
+        <div *ngFor="let gif of gifs" (click)="selectGif(gif.images.fixed_height.url)">
+            <img [src]="gif.images.fixed_height.url" alt="GIF" class="gif-image">
+        </div>
+    </div>
+</div>

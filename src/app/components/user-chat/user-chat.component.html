@@ -50,16 +50,20 @@
                         target="_blank"
                         class="small p-2 me-3 text-white rounded-3 bg-primary d-flex align-items-center">
                         <ng-container *ngIf="isImageFile(message.fileName); else notImage">
-                          <img [src]="'/assets/uploadedFiles/' + message.filePath" alt="Image Preview"
+                          <img [src]="'/assets/uploadedFiles/' + message.filePath" alt="Preview"
                             class="d-block custom-size" />
                         </ng-container>
                         <ng-template #notImage>
-                          <img src="../../../assets/file.png" width="25px" height="20px" alt="image" />
+                          <img src="../../../assets/file.png" width="25px" height="20px" alt="file" />
                           <span class="ms-2">{{ message.fileName }}</span>
                           <i class="fa-regular fa-circle-down fs-4 mt-2 ms-2 pb-2 cursor"
                             (click)="downloadFile(message)"></i>
                         </ng-template>
                       </a>
+                    </ng-container>
+                    <ng-container *ngIf="message.gifUrls">
+                      <img [src]="message.gifUrls" alt="Preview"
+                        class="d-block custom-size me-3 rounded" />
                     </ng-container>
                     <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary" (click)="showContextMenu(message)"
                       [matMenuTriggerFor]="messageContextMenu" *ngIf="message.content">
@@ -102,6 +106,10 @@
                           </ng-template>
                         </a>
                       </ng-container>
+                      <ng-container *ngIf="message.gifUrls" class="py-2">
+                        <img [src]="message.gifUrls" alt="Preview"
+                          class="d-block custom-size ms-3 rounded" />
+                      </ng-container>
                       <p class="small p-2 ms-3 mb-1 rounded-3 bgcolor-2" *ngIf="message.content">
                         {{ message.content }}
                       </p>
@@ -121,6 +129,9 @@
               id="exampleFormControlInput1" placeholder="Type message" [(ngModel)]="messageInput" (keyup.enter)="sendMessage()"/>
               <button mat-icon-button (click)="toggleEmojiPicker()">
                 <mat-icon>insert_emoticon</mat-icon>
+              </button>
+              <button mat-icon-button (click)="toggleGifPicker()">
+                <mat-icon>gif</mat-icon>
               </button>
               <button mat-icon-button (click)="attachFile()">
                 <mat-icon>attach_file</mat-icon>
@@ -151,3 +162,5 @@
 
 <!-- Emoji Picker -->
 <emoji-mart *ngIf="showEmojiPicker" (emojiSelect)="addEmoji($event)" [style]="{ position: 'absolute', bottom: '-40px', right: '30px' }"></emoji-mart>
+
+<app-gif-picker *ngIf="showGifPicker" (gifSelected)="addGif($event)"[style]="{ position: 'absolute', bottom: '-40px', right: '30px' }"></app-gif-picker>

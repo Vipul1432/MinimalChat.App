@@ -14,3 +14,8 @@ export const environment = {
 export const PASSWORD_REGEX: ValidatorFn = Validators.pattern(
   /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$/
 );
+
+export const giphy = {
+  url: 'https://api.giphy.com/v1/gifs/search',
+  apiKey: '',
+};

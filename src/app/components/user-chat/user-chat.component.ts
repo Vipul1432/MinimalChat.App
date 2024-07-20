@@ -54,6 +54,8 @@ export class UserChatComponent implements AfterViewChecked {
   externalLinkTarget: string = 'blank';
   selectedOption: number = 0;
   showEmojiPicker: boolean = false;
+  showGifPicker: boolean = false;
+  gifUrl: string | null = '';
 
   constructor(
     private chatService: ChatService,
@@ -89,6 +91,16 @@ export class UserChatComponent implements AfterViewChecked {
           });
       }
     );
+  }
+
+  toggleGifPicker() {
+    this.showGifPicker = !this.showGifPicker;
+  }
+
+  addGif(gifUrl: string) {
+    this.showGifPicker = false;
+    this.gifUrl = gifUrl;
+    this.sendMessage();
   }
 
   /**
@@ -240,10 +252,37 @@ export class UserChatComponent implements AfterViewChecked {
         });
     }
 
+    if (this.gifUrl) {
+      this.toggleEmojiPicker();
+      this.chatService
+        .sendMessage(this.userId, '', this.gifUrl)
+        .subscribe((response: any) => {
+          if (response.statusCode === 200) {
+            this.chatService
+              .getUserChat(this.userId, null, null, null)
+              .subscribe((messages: any) => {
+                this.userChat = messages.data || [];
+                this.topTimestamp =
+                  this.userChat.length > 0
+                    ? this.userChat[0].timestamp
+                    : new Date();
+                this.messageInput = '';
+                this.gifUrl = null;
+              });
+          } else {
+            this.toasterService.error({
+              detail: 'ERROR',
+              summary: 'Error occurs in Sending message! Try again.',
+              sticky: true,
+            });
+          }
+        });
+    }
+
     if (content.trim() !== '') {
       // Check if the content is not empty or whitespace
       this.chatService
-        .sendMessage(this.userId, content)
+        .sendMessage(this.userId, content, null)
         .subscribe((response: any) => {
           if (response.statusCode === 200) {
             this.chatService
@@ -455,10 +494,10 @@ export class UserChatComponent implements AfterViewChecked {
         if (messages) {
           if (
             messages.message == 'No more conversation found.' &&
-            messages.data != null && messages.data.length > 0
+            messages.data != null &&
+            messages.data.length > 0
           ) {
             this.isGroup = true;
-            console.log("isgrouptrue")
             this.userChat = [];
             this.groupmembers = messages.data;
             this.groupUsers = this.groupmembers.map(
@@ -466,11 +505,10 @@ export class UserChatComponent implements AfterViewChecked {
             );
           } else {
             this.userChat = messages.data || [];
-            console.log("isgroupFalse")
             this.isGroup = false;
           }
-          if (messages.data[0]?.users != null) {
-            this.groupmembers = messages.data[0].users;
+          if (messages.data != null && messages?.data[0].users != null) {
+            this.groupmembers = messages?.data[0].users;
             this.groupUsers = this.groupmembers.map(
               (member) => member.userName
             );
@@ -697,12 +735,10 @@ export class UserChatComponent implements AfterViewChecked {
   }
 
   toggleEmojiPicker() {
-    console.log(this.showEmojiPicker)
     this.showEmojiPicker = !this.showEmojiPicker;
   }
   addEmoji(event: EmojiEvent) {
     const emoji = event.emoji.native;
-    console.log(emoji);
     this.messageInput = this.messageInput + emoji;
   }
 }
