@@ -25,6 +25,7 @@ import { MakeUserAdminDialogComponent } from 'src/app/_helpers/make-user-admin-d
 import { HistoryOption } from '../../_helpers/enum/historyOption';
 import { AddGroupMember } from '../../_shared/models/AddGroupMember';
 import { EmojiEvent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { NotificationService } from '../../_shared/services/notification.service';
 
 @Component({
   selector: 'app-user-chat',
@@ -62,7 +63,8 @@ export class UserChatComponent implements AfterViewChecked {
     private authService: AuthService,
     private dialog: MatDialog,
     private toasterService: NgToastService,
-    private groupChatService: GroupChatService
+    private groupChatService: GroupChatService,
+    private notificationService: NotificationService
   ) {
     this.currentUserName = this.authService.getUserName();
     this.currentUserId = this.authService.getCurrentUserId();
@@ -77,6 +79,11 @@ export class UserChatComponent implements AfterViewChecked {
       this.chatService.startConnection();
     }
 
+    // Request notification permission
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+
     this.chatService.hubConnection.on(
       'ReceiveMessage',
       (id: string, message: string) => {
@@ -84,6 +91,8 @@ export class UserChatComponent implements AfterViewChecked {
           .getUserChat(this.userId, null, null, null)
           .subscribe((messages: any) => {
             this.userChat = messages.data || [];
+            console.log(JSON.stringify(messages))
+            this.pushLastMessageNotification(messages.data)
             this.topTimestamp =
               this.userChat.length > 0
                 ? this.userChat[0].timestamp
@@ -225,7 +234,7 @@ export class UserChatComponent implements AfterViewChecked {
    */
   sendMessage() {
     const content = this.messageInput.trim();
-    this.toggleEmojiPicker();
+    this.showEmojiPicker = false;
     if (this.selectedFile != null) {
       this.chatService
         .uploadFile(this.userId, this.selectedFile)
@@ -253,7 +262,7 @@ export class UserChatComponent implements AfterViewChecked {
     }
 
     if (this.gifUrl) {
-      this.toggleEmojiPicker();
+      this.showEmojiPicker = false;
       this.chatService
         .sendMessage(this.userId, '', this.gifUrl)
         .subscribe((response: any) => {
@@ -740,5 +749,12 @@ export class UserChatComponent implements AfterViewChecked {
   addEmoji(event: EmojiEvent) {
     const emoji = event.emoji.native;
     this.messageInput = this.messageInput + emoji;
+  }
+
+  private pushLastMessageNotification(messages:any): void {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.content && this.currentUserId !== lastMessage.senderId) {
+      this.notificationService.showNotification("New Message!",lastMessage.content);
+    }
   }
 }
